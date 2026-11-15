@@ -11,4 +11,10 @@ describe('angles', () => {
     expect(pickAngle(() => 0.999999)).toBe(ANGLES[ANGLES.length - 1]);
     expect(ANGLES).toContain(pickAngle());
   });
+
+  it('can exclude the angle that was just used', () => {
+    for (let i = 0; i < 20; i++) {
+      expect(pickAngle(() => i / 20, ANGLES[0])).not.toBe(ANGLES[0]);
+    }
+  });
 });

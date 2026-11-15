@@ -14,6 +14,11 @@ export const strings = {
     controlsLabel: 'Spark settings',
     typesLabel: 'Types',
     vibeLabel: 'Vibe',
+    contextAdd: 'Add group context',
+    contextLabel: 'Group context',
+    contextPlaceholder: 'e.g. old uni friends at a cabin',
+    contextDone: 'Done',
+    aiNeedsAttention: 'AI sparks are paused: check your key in Settings.',
   },
   types: {
     debate: 'Debate',
@@ -53,8 +58,30 @@ export const strings = {
   },
   settings: {
     title: 'Settings',
-    comingSoon:
-      'Bring-your-own-key AI sparks, the work-safe default and clearing history arrive in later milestones. Right now every spark comes from the offline deck.',
+    keySection: 'Gemini API key',
+    keyIntro:
+      'Paste your own Google AI Studio key for fresh AI sparks. Without a key, sparks come from the offline deck.',
+    keyInputLabel: 'API key',
+    keyPlaceholder: 'Paste your API key',
+    saveKey: 'Save key',
+    testKey: 'Test key',
+    removeKey: 'Remove key',
+    getKey: 'Get a free key in Google AI Studio',
+    keySaved: 'A key is saved.',
+    storedNative: 'It is stored securely on this device only.',
+    storedWeb: 'It is stored in this browser, on this device only.',
+    keyStatus: {
+      saved: 'Not tested yet.',
+      testing: 'Testing…',
+      ok: 'The key works. Sparks now come from Gemini.',
+    },
+    advanced: 'Advanced',
+    modelLabel: 'Model id',
+    modelHint: 'Leave blank to use the default.',
+    about: 'About',
+    privacy:
+      'There is no Stormbrainer server: AI requests go straight from this device to Google. On the Gemini free tier, Google may use prompts to improve its products, so keep anything sensitive out of the group context.',
+    comingSoon: 'The work-safe default and clearing history arrive in a later milestone.',
     version: 'Version',
   },
 } as const;

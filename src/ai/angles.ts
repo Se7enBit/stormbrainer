@@ -49,7 +49,9 @@ export const ANGLES = [
   'shopping',
 ] as const;
 
-export function pickAngle(random: () => number = Math.random): string {
-  const index = Math.min(Math.floor(random() * ANGLES.length), ANGLES.length - 1);
-  return ANGLES[index] ?? ANGLES[0];
+/** A random angle, never `exclude` (used to retry with a different one). */
+export function pickAngle(random: () => number = Math.random, exclude?: string): string {
+  const choices = ANGLES.filter((angle) => angle !== exclude);
+  const index = Math.min(Math.floor(random() * choices.length), choices.length - 1);
+  return choices[index] ?? ANGLES[0];
 }

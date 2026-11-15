@@ -1,7 +1,8 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { Spark } from '../sparks/types';
 import { strings } from '../strings';
+import { Button } from './Button';
 import { cardFontSize, colors, spacing, typeColors } from './theme';
 
 interface Props {
@@ -9,10 +10,12 @@ interface Props {
   onNext: () => void;
   onReroll: () => void;
   onClose: () => void;
+  /** Waiting for the next AI spark: show a spinner and disable Next/Reroll. */
+  loading?: boolean;
 }
 
 /** A full-screen card in very large text, laid out by spark type. */
-export function SparkCard({ spark, onNext, onReroll, onClose }: Props) {
+export function SparkCard({ spark, onNext, onReroll, onClose, loading = false }: Props) {
   const accent = typeColors[spark.type];
   const fontSize = cardFontSize(spark.text);
 
@@ -20,6 +23,7 @@ export function SparkCard({ spark, onNext, onReroll, onClose }: Props) {
     <View style={styles.card}>
       <View style={styles.header}>
         <Text style={[styles.typeLabel, { color: accent }]}>{strings.types[spark.type]}</Text>
+        {loading && <ActivityIndicator color={colors.textMuted} />}
         {spark.source === 'deck' && <Text style={styles.badge}>{strings.card.offlineBadge}</Text>}
       </View>
 
@@ -34,9 +38,9 @@ export function SparkCard({ spark, onNext, onReroll, onClose }: Props) {
       </ScrollView>
 
       <View style={styles.actions}>
-        <ActionButton label={strings.card.close} onPress={onClose} />
-        <ActionButton label={strings.card.reroll} onPress={onReroll} />
-        <ActionButton label={strings.card.next} onPress={onNext} primary />
+        <Button label={strings.card.close} onPress={onClose} grow />
+        <Button label={strings.card.reroll} onPress={onReroll} disabled={loading} grow />
+        <Button label={strings.card.next} onPress={onNext} disabled={loading} primary grow />
       </View>
     </View>
   );
@@ -89,31 +93,6 @@ function Option({ label, text, accent }: { label?: string; text: string; accent:
   );
 }
 
-function ActionButton({
-  label,
-  onPress,
-  primary = false,
-}: {
-  label: string;
-  onPress: () => void;
-  primary?: boolean;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      style={({ pressed }) => [
-        styles.action,
-        primary && styles.actionPrimary,
-        pressed && styles.actionPressed,
-      ]}
-    >
-      <Text style={[styles.actionText, primary && styles.actionTextPrimary]}>{label}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   card: {
     flex: 1,
@@ -123,10 +102,11 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: spacing.md,
   },
   typeLabel: {
+    flex: 1,
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: 2,
@@ -188,26 +168,5 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     gap: spacing.sm,
-  },
-  action: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    borderRadius: 14,
-    backgroundColor: colors.surfaceRaised,
-  },
-  actionPrimary: {
-    backgroundColor: colors.accent,
-  },
-  actionPressed: {
-    opacity: 0.8,
-  },
-  actionText: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  actionTextPrimary: {
-    color: colors.onAccent,
   },
 });
