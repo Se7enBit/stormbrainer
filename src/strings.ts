@@ -16,7 +16,7 @@ export const strings = {
     vibeLabel: 'Vibe',
     modesLabel: 'Mode',
     topicLabel: 'Brainstorm topic',
-    topicPlaceholder: 'What are you brainstorming? e.g. team offsite theme',
+    topicPlaceholder: 'What are you brainstorming?',
     topicNeedsKey:
       'Without a Gemini key, Brainstorm gives creativity prompts. Add a key in Settings for ideas about your topic.',
     contextAdd: 'Add group context',
@@ -95,6 +95,7 @@ export const strings = {
     body: 'Add it to your home screen: it opens full-screen, like an app.',
     button: 'Install',
     dismiss: 'Not now',
+    close: 'Close',
     stepsOther: 'Open the browser menu (⋮) and tap "Install app" or "Add to Home screen".',
     stepsIos: 'Tap the Share button, then "Add to Home Screen".',
   },

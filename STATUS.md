@@ -5,7 +5,7 @@ _Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9) done: 
 ## What works
 
 - **Scaffold:** Expo SDK 58, React Native 0.88, Expo Router (`app/`: `/`, `/saved`, `/settings`), TypeScript strict (plus `noUncheckedIndexedAccess`), Zustand, ESLint (expo flat config) + Prettier, Jest (`jest-expo`) + React Native Testing Library v14.
-- **Home screen:** one huge **Spark** button with the chips strip under it.
+- **Home screen:** one huge **Spark** button with the chips strip under it. The button sizes itself to the space between the mode chips and the controls, so it never overlaps them on small phones.
   - Type chips (multi-select, default all). When all are selected, one tap narrows to that type; deselecting the last one goes back to all.
   - Vibe chips (Light / Deep / Spicy, default Light).
   - Work-safe toggle.
@@ -63,7 +63,7 @@ _Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9) done: 
   - **Clear history**, so every spark can come up again.
   - About with the privacy note.
   - `Version 0.1.0 · <commit>`, so you can see which build is running.
-- **Install banner (web):** Home offers "Install Stormbrainer" until the app is installed or you tap "Not now" (remembered). Where the browser offers its own install prompt (Chrome/Edge on Android), Install opens it; an inline script in `public/index.html` keeps that offer even if it comes before the app loads. Elsewhere (e.g. iPhone Safari) it shows the two steps instead. Hidden in the native app.
+- **Install popup (web):** a popup over Home offers "Install Stormbrainer" until the app is installed. × closes it for this visit; "Not now" stops asking (remembered). Where the browser offers its own install prompt (Chrome/Edge on Android), Install opens it; an inline script in `public/index.html` keeps that offer even if it comes before the app loads. Elsewhere (e.g. iPhone Safari) it shows the two steps instead. Hidden in the native app.
 - **App icon and web manifest:** an original icon (the yellow Spark circle with a lightning bolt) for the app, the Android adaptive icon (with monochrome variant), the favicon and the web manifest. "Add to Home screen" on the preview now installs a standalone app with that icon. `expo-system-ui` keeps Android's root view dark.
 - **Preview APK** (`.github/workflows/android.yml`):
   - Builds an installable APK on GitHub Actions: `expo prebuild`, then a Gradle release build signed with the debug key, for arm64 phones.
