@@ -59,6 +59,7 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
   - **Clear history**, so every spark can come up again.
   - About with the privacy note.
   - `Version 0.1.0 · <commit>`, so you can see which build is running.
+- **Install banner (web):** Home offers "Install Stormbrainer" until the app is installed or you tap "Not now" (remembered). Where the browser offers its own install prompt (Chrome/Edge on Android), Install opens it; an inline script in `public/index.html` keeps that offer even if it comes before the app loads. Elsewhere (e.g. iPhone Safari) it shows the two steps instead. Hidden in the native app.
 - **App icon and web manifest:** an original icon (the yellow Spark circle with a lightning bolt) for the app, the Android adaptive icon (with monochrome variant), the favicon and the web manifest. "Add to Home screen" on the preview now installs a standalone app with that icon. `expo-system-ui` keeps Android's root view dark.
 - **Preview APK** (`.github/workflows/android.yml`):
   - Builds an installable APK on GitHub Actions: `expo prebuild`, then a Gradle release build signed with the debug key, for arm64 phones.

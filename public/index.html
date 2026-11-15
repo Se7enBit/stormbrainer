@@ -12,6 +12,13 @@
     <!-- Paths include the GitHub Pages base (experiments.baseUrl in app.json). -->
     <link rel="manifest" href="/stormbrainer/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/stormbrainer/apple-touch-icon.png" />
+    <!-- Chrome may offer installing before the app's code loads: keep that offer for the Install button. -->
+    <script>
+      window.addEventListener('beforeinstallprompt', function (event) {
+        event.preventDefault();
+        window.__installPrompt = event;
+      });
+    </script>
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
       /* These styles make the body full-height */

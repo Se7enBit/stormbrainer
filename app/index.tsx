@@ -4,6 +4,7 @@ import { BackHandler, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { sparkHaptic } from '../src/device/haptics';
+import { useInstall } from '../src/device/install';
 import { KeepAwake } from '../src/device/KeepAwake';
 import { isSaved } from '../src/sparks/saved';
 import { useSavedStore } from '../src/store/savedStore';
@@ -11,6 +12,7 @@ import { useSettingsStore } from '../src/store/settingsStore';
 import { useSparkStore } from '../src/store/sparkStore';
 import { ChipsStrip } from '../src/ui/ChipsStrip';
 import { ContextBox } from '../src/ui/ContextBox';
+import { InstallBanner } from '../src/ui/InstallBanner';
 import { SourceStatus } from '../src/ui/SourceStatus';
 import { SparkButton } from '../src/ui/SparkButton';
 import { SparkCard } from '../src/ui/SparkCard';
@@ -42,6 +44,11 @@ export default function Home() {
 
   // With a key, fetch AI sparks as soon as Home shows (and when settings change), so the
   // first tap is already an AI card instead of a deck card while Gemini thinks.
+  const install = useInstall();
+  const installDismissed = useSettingsStore((s) => s.installDismissed);
+  const settingsLoaded = useSettingsStore((s) => s.hydrated);
+  const dismissInstall = useSettingsStore((s) => s.dismissInstall);
+
   const showingHome = current === null;
   useEffect(() => {
     if (hasKey && showingHome) prefetch();
@@ -83,6 +90,14 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: true }} />
+      {settingsLoaded && !install.installed && !installDismissed && (
+        <InstallBanner
+          canPrompt={install.canPrompt}
+          ios={install.ios}
+          onInstall={install.prompt}
+          onDismiss={dismissInstall}
+        />
+      )}
       <View style={styles.center}>
         <SparkButton onPress={spark} loading={loading} />
       </View>

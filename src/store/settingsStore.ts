@@ -7,6 +7,7 @@ import { configureAi, currentProvider } from './ai';
 
 const MODEL_KEY = 'stormbrainer.model';
 const WORK_SAFE_KEY = 'stormbrainer.workSafeDefault';
+const INSTALL_DISMISSED_KEY = 'stormbrainer.installDismissed';
 
 /** Problems only fixable in Settings. */
 const NEEDS_SETTINGS: readonly AiErrorKind[] = ['invalidKey', 'modelNotFound'];
@@ -30,6 +31,9 @@ interface SettingsState {
   model: string;
   /** Work-safe toggle position at startup. */
   workSafeDefault: boolean;
+  /** "Not now" on the install banner (web). */
+  installDismissed: boolean;
+  dismissInstall: () => void;
   load: () => Promise<void>;
   /** Save a pasted key, then test it. */
   saveKey: (apiKey: string) => Promise<void>;
@@ -50,12 +54,14 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   lastProblem: null,
   model: '',
   workSafeDefault: false,
+  installDismissed: false,
 
   load: async () => {
-    const [apiKey, model, workSafe] = await Promise.all([
+    const [apiKey, model, workSafe, installDismissed] = await Promise.all([
       loadApiKey(),
       getString(MODEL_KEY),
       getString(WORK_SAFE_KEY),
+      getString(INSTALL_DISMISSED_KEY),
     ]);
     configureAi(apiKey, model ?? '');
     set({
@@ -64,6 +70,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
       keyStatus: apiKey ? 'saved' : 'none',
       model: model ?? '',
       workSafeDefault: workSafe === 'true',
+      installDismissed: installDismissed === 'true',
     });
   },
 
@@ -107,6 +114,11 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     const apiKey = get().hasKey ? await loadApiKey() : null;
     configureAi(apiKey, model);
     set({ model, keyStatus: apiKey ? 'saved' : 'none', keyDetail: null, lastProblem: null });
+  },
+
+  dismissInstall: () => {
+    set({ installDismissed: true });
+    setString(INSTALL_DISMISSED_KEY, 'true').catch(() => {});
   },
 
   setWorkSafeDefault: async (workSafe) => {

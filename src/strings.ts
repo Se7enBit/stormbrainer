@@ -68,6 +68,14 @@ export const strings = {
     blocked: 'Gemini returned no usable sparks. Trying again shortly.',
     badResponse: 'Gemini sent an unexpected answer. Trying again shortly.',
   } satisfies Record<AiErrorKind, string>,
+  install: {
+    title: 'Install Stormbrainer',
+    body: 'Add it to your home screen: it opens full-screen, like an app.',
+    button: 'Install',
+    dismiss: 'Not now',
+    stepsOther: 'Open the browser menu (⋮) and tap "Install app" or "Add to Home screen".',
+    stepsIos: 'Tap the Share button, then "Add to Home Screen".',
+  },
   saved: {
     title: 'Saved',
     empty: 'Nothing saved yet. Tap ☆ on a card to keep it here.',
