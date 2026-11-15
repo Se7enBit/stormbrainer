@@ -25,6 +25,8 @@ function statusText(status: KeyStatus): string | null {
 export default function Settings() {
   const hasKey = useSettingsStore((s) => s.hasKey);
   const keyStatus = useSettingsStore((s) => s.keyStatus);
+  const keyDetail = useSettingsStore((s) => s.keyDetail);
+  const lastProblem = useSettingsStore((s) => s.lastProblem);
   const model = useSettingsStore((s) => s.model);
   const saveKey = useSettingsStore((s) => s.saveKey);
   const testKey = useSettingsStore((s) => s.testKey);
@@ -109,6 +111,17 @@ export default function Settings() {
             accessibilityLiveRegion="polite"
           >
             {status}
+          </Text>
+        )}
+        {keyDetail && (
+          <Text style={styles.note}>
+            {strings.settings.details} {keyDetail}
+          </Text>
+        )}
+        {hasKey && lastProblem && keyStatus !== lastProblem.kind && (
+          <Text style={styles.note}>
+            {strings.settings.lastProblem} {strings.aiErrors[lastProblem.kind]}
+            {lastProblem.detail ? ` ${strings.settings.details} ${lastProblem.detail}` : ''}
           </Text>
         )}
         <Text

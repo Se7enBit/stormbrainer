@@ -17,7 +17,8 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
   - Memory lane: "Who has a story?" hint.
   - What if: two options when it is a would-you-rather.
   - Card actions: **Next**, **Reroll**, **Close**, and **☆ Save** in the corner (★ when saved; tap again to unsave).
-  - An "offline deck" badge on every card that came from the deck.
+  - A source badge on every card: yellow **Gemini** for AI sparks, grey **offline deck** for deck sparks.
+  - A status line on Home says where sparks come from right now: "Sparks come from Gemini", "…offline deck. Add a Gemini key…", or "Offline deck for now: <reason>" (links to Settings).
   - Android back closes the card.
   - Haptic tap on Spark and Next (`expo-haptics`; vibration on Android web).
   - The screen stays awake while a card is showing (`expo-keep-awake`; Wake Lock on web).
@@ -26,23 +27,24 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
 - **Offline deck (F3):** `src/sparks/deck.json`, 152 hand-written sparks: 38 per type, 64 Light (all work-safe), 48 Deep, 40 Spicy. Default settings give a 64-spark pool, so "50 taps produce no repeats" holds (tested, with work-safe on and off). Each entry is validated in tests: shape, ≤ 160 chars, no emojis, no numbering, options where required, unique ids and texts.
 - **AI sparks with your own key (F4):**
   - **Settings:**
-    - Paste a key; saving it runs **Test key** straight away.
+    - Paste a key; saving it runs **Test key** straight away. Test key asks Gemini for one real spark, so it proves that generation works, not just that the key exists.
     - **Test key** and **Remove key** buttons, and a link to the AI Studio key page.
-    - Status messages: works / not accepted / model not found / network.
+    - Status messages: works / not accepted / model not found / network, plus Google's own error text ("Details: …", key removed) and the last problem seen while drawing sparks.
     - **Advanced → model id** (blank = default) and the privacy note.
   - **Key storage:**
     - `expo-secure-store` on native, `localStorage` on web, with the "this device only" note.
     - The key is never held in app state, logged, put in a URL or in an error; tests check this.
   - **Gemini** (`src/ai/gemini.ts`):
     - Plain `fetch` to the REST API; the key only in the `x-goog-api-key` header.
-    - `responseSchema` JSON output, a 15 s timeout.
-    - Test key is a GET of the model's metadata, which costs no quota.
+    - `responseSchema` JSON output, a 30 s timeout.
+    - `thinkingLevel: "low"` for Gemini 3+ models: 3.8 Flash thinks at "medium" by default, which made the first answers slow. Older models don't get the field.
     - The one model constant is `DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash'` (free tier, checked 2026-11-15).
   - **Batching and queue** (`src/sparks/source.ts`):
     - One request returns 5 sparks; later taps come from the queue instantly.
     - The queue refills in the background when ≤ 1 is left.
     - It is dropped when chips or context change.
-    - A tap waits for AI for at most 5 s (spinner on the button), then shows a deck card while the batch keeps coming.
+    - Home **prefetches** a batch as soon as it shows (and when chips or context change), so the first tap is already an AI card.
+    - If a tap still finds the queue empty, it waits for AI for at most 8 s (spinner on the button), then shows a deck card while the batch keeps coming.
   - **Variety:** each request gets one of 44 random angles plus the last 30 shown texts as "do not repeat". The model's output is validated with the deck's rules (`src/sparks/validate.ts`).
   - **Failures** never crash or spin forever:
     - Quota (429): silent fallback to the deck with the badge, AI paused 60 s.
@@ -62,7 +64,7 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
   - Uploads it as the run's `stormbrainer-apk` artifact.
   - Runs from the Actions tab (Run workflow) and on pushes that change native dependencies or config.
   - No Expo account or secrets needed. `eas.json` also has the SPEC's `preview` profile (APK, internal distribution) for EAS cloud builds.
-- **Tests:** 270 passing (each deck entry is its own validation test). Tests mock `fetch`; they never hit the real API. They cover:
+- **Tests:** 276 passing (each deck entry is its own validation test). Tests mock `fetch`; they never hit the real API. They cover:
   - deck validation, filtering, draw/dedupe and history;
   - prompt building, response parsing, error mapping;
   - queue refill and invalidation, retries, cooldowns, slow AI, fallback orchestration;
@@ -94,8 +96,9 @@ Following SPEC.md §8:
 
 ## Known issues / limitations
 
-- **Not tested against the real Gemini API from here.** Everything is tested with a faked API: this environment cannot reach Google, and tests must not use a real key. The first real check is pasting your key on the preview. If Test key fails with "model not found", set the model id under Advanced.
-- **Gemini thinking is left at the model default.** If the first AI card is often slower than the 3 s target (the 5 s wait then shows a deck card first), try a lower thinking level in the request once real calls can be measured.
+- **Not tested against the real Gemini API from here.** Everything is tested with a faked API: this environment cannot reach Google, and tests must not use a real key. The first real check is pasting your key: Test key now generates a real spark and shows Google's error text if anything is wrong.
+- **The key is per device and per app.** The web preview (each browser) and the APK store their own keys; paste it in each.
+- **Prefetching spends quota** even if you don't tap: one batch (one request) per Home visit with new settings.
 - **Chips and context reset on reload** (only the key, model, work-safe default and saved sparks persist). History is per session by design (SPEC F3).
 - **Reroll behaves exactly like Next** (both take the next spark for the same settings).
 - **Browser back on the web** while a card is showing leaves the page instead of closing the card. The card is screen state, not a route. Android hardware back is handled.

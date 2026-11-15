@@ -1,12 +1,15 @@
 import { create } from 'zustand';
 
-import { isAiError, type AiErrorKind } from '../ai/provider';
+import { toAiProblem, type AiErrorKind, type AiProblem } from '../ai/provider';
 import { getString, removeKey, setString } from '../storage/kv';
 import { loadApiKey, removeApiKey, saveApiKey } from '../storage/secureKey';
 import { configureAi, currentProvider } from './ai';
 
 const MODEL_KEY = 'stormbrainer.model';
 const WORK_SAFE_KEY = 'stormbrainer.workSafeDefault';
+
+/** Problems only fixable in Settings. */
+const NEEDS_SETTINGS: readonly AiErrorKind[] = ['invalidKey', 'modelNotFound'];
 
 /** none: no key saved; saved: saved but not tested yet; ok: last test passed. */
 export type KeyStatus = 'none' | 'saved' | 'testing' | 'ok' | AiErrorKind;
@@ -17,6 +20,10 @@ interface SettingsState {
   /** Whether a key is saved. The key itself is never kept in state. */
   hasKey: boolean;
   keyStatus: KeyStatus;
+  /** The provider's own words for the last Test key failure, if any. */
+  keyDetail: string | null;
+  /** The last AI failure while drawing sparks (cleared by a passing Test key). */
+  lastProblem: AiProblem | null;
   /** Model override from Advanced; empty means the default. */
   model: string;
   /** Work-safe toggle position at startup. */
@@ -28,14 +35,16 @@ interface SettingsState {
   testKey: () => Promise<void>;
   setModel: (model: string) => Promise<void>;
   setWorkSafeDefault: (workSafe: boolean) => Promise<void>;
-  /** A spark request found the key or model unusable: show it in Settings. */
-  reportAiError: (kind: AiErrorKind) => void;
+  /** A spark request failed: remember it for Settings; a bad key or model also sets keyStatus. */
+  reportAiProblem: (problem: AiProblem) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()((set, get) => ({
   hydrated: false,
   hasKey: false,
   keyStatus: 'none',
+  keyDetail: null,
+  lastProblem: null,
   model: '',
   workSafeDefault: false,
 
@@ -60,26 +69,27 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     if (!apiKey) return;
     await saveApiKey(apiKey);
     configureAi(apiKey, get().model);
-    set({ hasKey: true, keyStatus: 'saved' });
+    set({ hasKey: true, keyStatus: 'saved', keyDetail: null, lastProblem: null });
     await get().testKey();
   },
 
   removeKey: async () => {
     await removeApiKey();
     configureAi(null, get().model);
-    set({ hasKey: false, keyStatus: 'none' });
+    set({ hasKey: false, keyStatus: 'none', keyDetail: null, lastProblem: null });
   },
 
   testKey: async () => {
     const provider = currentProvider();
     if (!provider) return;
-    set({ keyStatus: 'testing' });
+    set({ keyStatus: 'testing', keyDetail: null });
     try {
       await provider.testKey();
-      if (currentProvider() === provider) set({ keyStatus: 'ok' });
+      if (currentProvider() === provider) set({ keyStatus: 'ok', lastProblem: null });
     } catch (error) {
       if (currentProvider() === provider) {
-        set({ keyStatus: isAiError(error) ? error.kind : 'badResponse' });
+        const problem = toAiProblem(error);
+        set({ keyStatus: problem.kind, keyDetail: problem.detail ?? null });
       }
     }
   },
@@ -91,7 +101,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     else await removeKey(MODEL_KEY);
     const apiKey = get().hasKey ? await loadApiKey() : null;
     configureAi(apiKey, model);
-    set({ model, keyStatus: apiKey ? 'saved' : 'none' });
+    set({ model, keyStatus: apiKey ? 'saved' : 'none', keyDetail: null, lastProblem: null });
   },
 
   setWorkSafeDefault: async (workSafe) => {
@@ -99,7 +109,11 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     await setString(WORK_SAFE_KEY, String(workSafe));
   },
 
-  reportAiError: (kind) => {
-    if (get().hasKey) set({ keyStatus: kind });
+  reportAiProblem: (problem) => {
+    if (!get().hasKey) return;
+    set({ lastProblem: problem });
+    if (NEEDS_SETTINGS.includes(problem.kind)) {
+      set({ keyStatus: problem.kind, keyDetail: problem.detail ?? null });
+    }
   },
 }));

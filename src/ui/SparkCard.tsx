@@ -34,7 +34,9 @@ export function SparkCard({
       <View style={styles.header}>
         <Text style={[styles.typeLabel, { color: accent }]}>{strings.types[spark.type]}</Text>
         {loading && <ActivityIndicator color={colors.textMuted} />}
-        {spark.source === 'deck' && <Text style={styles.badge}>{strings.card.offlineBadge}</Text>}
+        <Text style={[styles.badge, spark.source === 'ai' && styles.badgeAi]}>
+          {spark.source === 'ai' ? strings.card.aiBadge : strings.card.offlineBadge}
+        </Text>
         {onToggleSave && (
           <Pressable
             onPress={onToggleSave}
@@ -139,6 +141,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 30,
     lineHeight: 34,
+  },
+  badgeAi: {
+    color: colors.onAccent,
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+    fontWeight: '700',
   },
   badge: {
     color: colors.textMuted,

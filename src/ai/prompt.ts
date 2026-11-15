@@ -35,7 +35,7 @@ export function cleanContext(context: string | undefined): string | undefined {
 
 export function buildUserPrompt(request: SparkRequest): string {
   const lines = [
-    `Write ${request.count} sparks.`,
+    request.count === 1 ? 'Write 1 spark.' : `Write ${request.count} sparks.`,
     `Types (spread them across these): ${request.types.join(', ')}.`,
     `Vibe: ${VIBE_GUIDE[request.vibe]}.`,
     request.workSafe ? WORK_SAFE_ON : WORK_SAFE_OFF,
@@ -72,8 +72,13 @@ export const RESPONSE_SCHEMA = {
   required: ['sparks'],
 } as const;
 
+export type ThinkingLevel = 'low' | 'medium' | 'high';
+
 /** Request body for Gemini `generateContent`. */
-export function buildGenerateContentBody(request: SparkRequest) {
+export function buildGenerateContentBody(
+  request: SparkRequest,
+  options: { thinkingLevel?: ThinkingLevel } = {},
+) {
   return {
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
     contents: [{ role: 'user', parts: [{ text: buildUserPrompt(request) }] }],
@@ -81,6 +86,7 @@ export function buildGenerateContentBody(request: SparkRequest) {
       responseMimeType: 'application/json',
       responseSchema: RESPONSE_SCHEMA,
       temperature: 1,
+      ...(options.thinkingLevel && { thinkingConfig: { thinkingLevel: options.thinkingLevel } }),
     },
   };
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { AiErrorKind } from '../ai/provider';
+import type { AiProblem } from '../ai/provider';
 import { defaultFilters, toggleType } from '../sparks/filters';
 import { emptyHistory, recordShown, type History } from '../sparks/history';
 import type { Spark, SparkFilters, SparkType, Vibe } from '../sparks/types';
@@ -17,9 +17,11 @@ interface SparkState {
   /** True while a tap waits for AI (never longer than the source's wait limit). */
   loading: boolean;
   /** Why the last card came from the deck although a key is set. */
-  aiError: AiErrorKind | null;
+  aiProblem: AiProblem | null;
   /** Spark button and Next: show a new spark. */
   next: () => Promise<void>;
+  /** Start fetching AI sparks for the current settings, so the next tap is instant. */
+  prefetch: () => void;
   /** Replace the card with another one for the same settings (same draw as `next`). */
   reroll: () => Promise<void>;
   /** Back to the home screen. */
@@ -45,15 +47,14 @@ export const useSparkStore = create<SparkState>()((set, get) => {
       const result = await sparkSource.next({ filters, context }, history, current, () =>
         set({ loading: true }),
       );
-      const aiError = result?.aiError ?? null;
+      const aiProblem = result?.aiProblem ?? null;
       set({
         ...(result && { current: result.spark, history: result.history }),
-        aiError,
+        aiProblem,
         loading: false,
       });
-      if (aiError === 'invalidKey' || aiError === 'modelNotFound') {
-        useSettingsStore.getState().reportAiError(aiError);
-      }
+      if (aiProblem) useSettingsStore.getState().reportAiProblem(aiProblem);
+      else if (result?.spark.source === 'ai') useSettingsStore.setState({ lastProblem: null });
     } finally {
       busy = false;
     }
@@ -65,8 +66,12 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     current: null,
     history: emptyHistory,
     loading: false,
-    aiError: null,
+    aiProblem: null,
     next: draw,
+    prefetch: () => {
+      const { filters, context, history } = get();
+      sparkSource.prefetch({ filters, context }, history);
+    },
     reroll: draw,
     close: () => set({ current: null }),
     show: (spark) =>

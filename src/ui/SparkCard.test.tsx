@@ -54,12 +54,13 @@ describe('SparkCard', () => {
     expect(screen.queryByText(strings.card.or)).not.toBeOnTheScreen();
   });
 
-  it('shows the offline deck badge only for deck sparks', async () => {
+  it('labels where the spark came from: offline deck or Gemini', async () => {
     await renderCard({ ...base, type: 'hotTake', text: 'From the deck.' });
     expect(screen.getByText(strings.card.offlineBadge)).toBeOnTheScreen();
     await screen.unmount();
     await renderCard({ ...base, source: 'ai', type: 'hotTake', text: 'From the AI.' });
     expect(screen.queryByText(strings.card.offlineBadge)).not.toBeOnTheScreen();
+    expect(screen.getByText(strings.card.aiBadge)).toBeOnTheScreen();
   });
 
   it('wires the card actions', async () => {

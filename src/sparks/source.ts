@@ -1,6 +1,12 @@
 import { pickAngle } from '../ai/angles';
 import { cleanContext } from '../ai/prompt';
-import { isAiError, type AiErrorKind, type AiProvider } from '../ai/provider';
+import {
+  isAiError,
+  toAiProblem,
+  type AiErrorKind,
+  type AiProblem,
+  type AiProvider,
+} from '../ai/provider';
 import { drawFromDeck } from './deck';
 import { hasSeen, recordShown, type History } from './history';
 import type { Spark, SparkFilters, SparkRequest } from './types';
@@ -9,8 +15,8 @@ import type { Spark, SparkFilters, SparkRequest } from './types';
 export const BATCH_SIZE = 5;
 /** Refill in the background once this few queued sparks remain. */
 export const REFILL_AT = 1;
-/** How long a tap waits for AI before showing a deck card instead. */
-export const AI_WAIT_MS = 5_000;
+/** How long a tap waits for AI before showing a deck card instead (rare: Home prefetches). */
+export const AI_WAIT_MS = 8_000;
 /** After a quota error, use the deck for this long before trying AI again. */
 export const QUOTA_COOLDOWN_MS = 60_000;
 /** After a network, blocked or bad-output error, use the deck for this long. */
@@ -26,7 +32,7 @@ export interface NextResult {
   spark: Spark;
   history: History;
   /** Set when this card came from the deck because AI failed. */
-  aiError?: AiErrorKind;
+  aiProblem?: AiProblem;
 }
 
 interface SourceDeps {
@@ -82,7 +88,7 @@ export class SparkSource {
   private pausedUntil = 0;
   /** Set by errors only the user can fix; cleared when the provider changes. */
   private disabledBy: AiErrorKind | null = null;
-  private lastError: AiErrorKind | null = null;
+  private lastProblem: AiProblem | null = null;
 
   constructor({ deck, random = Math.random, now = Date.now, aiWaitMs = AI_WAIT_MS }: SourceDeps) {
     this.deck = deck;
@@ -98,11 +104,24 @@ export class SparkSource {
     this.inFlight = null;
     this.pausedUntil = 0;
     this.disabledBy = null;
-    this.lastError = null;
+    this.lastProblem = null;
   }
 
   get hasProvider(): boolean {
     return this.provider !== null;
+  }
+
+  /**
+   * Fetch a batch in the background for these settings if none is queued, so the next tap is
+   * instant. Home calls this when it shows and when the chips or context change.
+   */
+  prefetch(settings: SourceSettings, history: History): void {
+    const key = settingsKey(settings);
+    if (key !== this.queueKey) {
+      this.queue = [];
+      this.queueKey = key;
+    }
+    if (this.queue.length <= REFILL_AT) this.refill(settings, history);
   }
 
   /** The next card. `onWait` is called only if the tap has to wait for the network. */
@@ -138,7 +157,7 @@ export class SparkSource {
 
     const draw = drawFromDeck(this.deck, settings.filters, history, this.random, current);
     if (!draw) return null;
-    return this.provider && this.lastError ? { ...draw, aiError: this.lastError } : draw;
+    return this.provider && this.lastProblem ? { ...draw, aiProblem: this.lastProblem } : draw;
   }
 
   private aiAvailable(): boolean {
@@ -172,11 +191,11 @@ export class SparkSource {
         // Settings or key changed meanwhile: these sparks are for something else.
         if (this.provider !== provider || this.queueKey !== key) return;
         this.queue.push(...sparks);
-        this.lastError = null;
+        this.lastProblem = null;
       })
       .catch((error: unknown) => {
         if (this.provider !== provider) return;
-        this.fail(isAiError(error) ? error.kind : 'badResponse');
+        this.fail(toAiProblem(error));
       })
       .finally(() => {
         if (this.inFlight?.promise === promise) this.inFlight = null;
@@ -185,8 +204,9 @@ export class SparkSource {
     return promise;
   }
 
-  private fail(kind: AiErrorKind): void {
-    this.lastError = kind;
+  private fail(problem: AiProblem): void {
+    const { kind } = problem;
+    this.lastProblem = problem;
     if (NEEDS_USER.includes(kind)) {
       this.disabledBy = kind;
     } else {
