@@ -1,0 +1,7 @@
+node_modules/
+dist/
+web-build/
+.expo/
+package-lock.json
+# Docs are prose, not code: keep them exactly as written.
+*.md
