@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
-import { DEFAULT_GEMINI_MODEL } from './ai/gemini';
+import { BACKUP_GEMINI_MODEL, DEFAULT_GEMINI_MODEL } from './ai/gemini';
 import { loadApiKey, removeApiKey, saveApiKey } from './storage/secureKey';
 import { configureAi } from './store/ai';
 import { useSettingsStore } from './store/settingsStore';
@@ -67,9 +67,10 @@ describe('Settings: API key', () => {
     expect(await loadApiKey()).toBe(KEY);
     const [check, test] = calls();
     // Test key checks Google is reachable, then asks for one real spark.
-    expect(check?.url).toBe(
-      `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}`,
-    );
+    expect(check?.url).toBe('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1');
+    expect(
+      screen.getByText(`${strings.settings.workingModel} ${DEFAULT_GEMINI_MODEL}`),
+    ).toBeOnTheScreen();
     expect(test?.url).toBe(
       `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}:generateContent`,
     );
@@ -176,7 +177,7 @@ describe('Home with a key', () => {
     expect(await screen.findByText(strings.card.offlineBadge)).toBeOnTheScreen();
     expect(useSparkStore.getState().aiProblem).toEqual({
       kind: 'quota',
-      detail: 'Quota exceeded.',
+      detail: `${DEFAULT_GEMINI_MODEL}: Quota exceeded. | ${BACKUP_GEMINI_MODEL}: Quota exceeded.`,
     });
     expect(useSparkStore.getState().current?.source).toBe('deck');
 
@@ -188,7 +189,7 @@ describe('Home with a key', () => {
     ).toBeOnTheScreen();
     expect(useSettingsStore.getState().lastProblem).toEqual({
       kind: 'quota',
-      detail: 'Quota exceeded.',
+      detail: `${DEFAULT_GEMINI_MODEL}: Quota exceeded. | ${BACKUP_GEMINI_MODEL}: Quota exceeded.`,
     });
   });
 

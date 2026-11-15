@@ -44,7 +44,7 @@ function fakeProvider(script: Reply[] = []) {
       if (reply instanceof Error) throw reply;
       return reply;
     }),
-    testKey: jest.fn(async () => {}),
+    testKey: jest.fn(async () => ({ model: 'fake-model' })),
   };
   return { provider, requests };
 }

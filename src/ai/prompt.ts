@@ -77,7 +77,7 @@ export type ThinkingLevel = 'low' | 'medium' | 'high';
 /** Request body for Gemini `generateContent`. */
 export function buildGenerateContentBody(
   request: SparkRequest,
-  options: { thinkingLevel?: ThinkingLevel } = {},
+  options: { thinkingLevel?: ThinkingLevel; maxOutputTokens?: number } = {},
 ) {
   return {
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
@@ -87,6 +87,7 @@ export function buildGenerateContentBody(
       responseSchema: RESPONSE_SCHEMA,
       temperature: 1,
       ...(options.thinkingLevel && { thinkingConfig: { thinkingLevel: options.thinkingLevel } }),
+      ...(options.maxOutputTokens && { maxOutputTokens: options.maxOutputTokens }),
     },
   };
 }

@@ -22,6 +22,8 @@ interface SettingsState {
   keyStatus: KeyStatus;
   /** The provider's own words for the last Test key failure, if any. */
   keyDetail: string | null;
+  /** The model that answered the last passing Test key. */
+  workingModel: string | null;
   /** The last AI failure while drawing sparks (cleared by a passing Test key). */
   lastProblem: AiProblem | null;
   /** Model override from Advanced; empty means the default. */
@@ -44,6 +46,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   hasKey: false,
   keyStatus: 'none',
   keyDetail: null,
+  workingModel: null,
   lastProblem: null,
   model: '',
   workSafeDefault: false,
@@ -82,10 +85,12 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   testKey: async () => {
     const provider = currentProvider();
     if (!provider) return;
-    set({ keyStatus: 'testing', keyDetail: null });
+    set({ keyStatus: 'testing', keyDetail: null, workingModel: null });
     try {
-      await provider.testKey();
-      if (currentProvider() === provider) set({ keyStatus: 'ok', lastProblem: null });
+      const { model } = await provider.testKey();
+      if (currentProvider() === provider) {
+        set({ keyStatus: 'ok', workingModel: model, lastProblem: null });
+      }
     } catch (error) {
       if (currentProvider() === provider) {
         const problem = toAiProblem(error);
