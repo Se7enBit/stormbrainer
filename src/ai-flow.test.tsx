@@ -65,8 +65,11 @@ describe('Settings: API key', () => {
 
     expect(await screen.findByText(strings.settings.keyStatus.ok)).toBeOnTheScreen();
     expect(await loadApiKey()).toBe(KEY);
-    const [test] = calls();
-    // Test key asks for one real spark.
+    const [check, test] = calls();
+    // Test key checks Google is reachable, then asks for one real spark.
+    expect(check?.url).toBe(
+      `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}`,
+    );
     expect(test?.url).toBe(
       `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}:generateContent`,
     );
