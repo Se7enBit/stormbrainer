@@ -13,8 +13,10 @@ export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 /** Where users create a key (linked from Settings). */
 export const API_KEY_URL = 'https://aistudio.google.com/apikey';
-/** Generous: a thinking model can take a while for a batch. Taps never wait this long. */
-const DEFAULT_TIMEOUT_MS = 30_000;
+/** Generous: a busy model can take a while for a batch. Taps never wait this long. */
+const DEFAULT_TIMEOUT_MS = 60_000;
+/** Test key's first step only checks that Google answers at all: that is quick or never. */
+const CONNECT_TIMEOUT_MS = 10_000;
 const MAX_DETAIL_LENGTH = 160;
 
 /**
@@ -41,7 +43,12 @@ export interface GeminiOptions {
   /** Blank means DEFAULT_GEMINI_MODEL. A leading "models/" is ignored. */
   model?: string;
   fetch?: typeof fetch;
+  /** Limit for generation requests. */
   timeoutMs?: number;
+  /** Limit for Test key's reachability check. */
+  connectTimeoutMs?: number;
+  /** Clock, for Test key's timings. */
+  now?: () => number;
   /** Ids for generated sparks. */
   newId?: () => string;
 }
@@ -88,6 +95,12 @@ export function safeDetail(message: unknown, apiKey: string): string | undefined
   return text.length > MAX_DETAIL_LENGTH ? `${text.slice(0, MAX_DETAIL_LENGTH - 1)}…` : text;
 }
 
+/** Milliseconds as seconds, one decimal below 10 s. */
+function seconds(ms: number): string {
+  const s = ms / 1000;
+  return s < 10 ? String(Math.round(s * 10) / 10) : String(Math.round(s));
+}
+
 let idCounter = 0;
 function defaultNewId(): string {
   idCounter += 1;
@@ -101,13 +114,15 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
   const fetchFn =
     options.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const connectTimeoutMs = options.connectTimeoutMs ?? CONNECT_TIMEOUT_MS;
+  const now = options.now ?? Date.now;
   const newId = options.newId ?? defaultNewId;
   const modelPath = `models/${encodeURIComponent(model)}`;
   const thinkingLevel = thinkingLevelFor(model);
 
-  async function call(path: string, body?: unknown): Promise<unknown> {
+  async function call(path: string, body?: unknown, limitMs = timeoutMs): Promise<unknown> {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const timer = setTimeout(() => controller.abort(), limitMs);
     let response: Response;
     try {
       response = await fetchFn(`${API_BASE}/${path}`, {
@@ -122,7 +137,7 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
     } catch {
       // Offline, DNS, CORS or our timeout: all the same to the user, but say which.
       const detail = controller.signal.aborted
-        ? `No answer within ${Math.round(timeoutMs / 1000)} s.`
+        ? `No answer within ${seconds(limitMs)} s.`
         : 'Could not connect.';
       throw new AiError('network', undefined, detail);
     } finally {
@@ -175,8 +190,35 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
   return {
     generateSparks,
     async testKey(): Promise<void> {
-      // One real spark: a metadata read would pass even when generation itself fails.
-      await generateSparks(TEST_REQUEST);
+      // Step 1: can this device reach Google at all? (Model metadata: no generation, no quota.)
+      const started = now();
+      try {
+        await call(modelPath, undefined, connectTimeoutMs);
+      } catch (error) {
+        if (error instanceof AiError && error.kind === 'network' && error.status === undefined) {
+          throw new AiError(
+            'network',
+            undefined,
+            `Could not reach Google: ${error.detail ?? 'no connection.'} Check the internet connection, and any VPN, private DNS or content blocker on this device.`,
+          );
+        }
+        throw error;
+      }
+      const reachedIn = seconds(now() - started);
+
+      // Step 2: one real spark, since a metadata read passes even when generation fails.
+      try {
+        await generateSparks(TEST_REQUEST);
+      } catch (error) {
+        if (error instanceof AiError && error.kind === 'network' && error.status === undefined) {
+          throw new AiError(
+            'network',
+            undefined,
+            `Google answered in ${reachedIn} s, but Gemini did not write a test spark (${error.detail ?? 'no answer'}). The model may be busy: try again later, or try another model under Advanced.`,
+          );
+        }
+        throw error;
+      }
     },
   };
 }

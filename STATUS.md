@@ -27,7 +27,7 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
 - **Offline deck (F3):** `src/sparks/deck.json`, 152 hand-written sparks: 38 per type, 64 Light (all work-safe), 48 Deep, 40 Spicy. Default settings give a 64-spark pool, so "50 taps produce no repeats" holds (tested, with work-safe on and off). Each entry is validated in tests: shape, ≤ 160 chars, no emojis, no numbering, options where required, unique ids and texts.
 - **AI sparks with your own key (F4):**
   - **Settings:**
-    - Paste a key; saving it runs **Test key** straight away. Test key asks Gemini for one real spark, so it proves that generation works, not just that the key exists.
+    - Paste a key; saving it runs **Test key** straight away. Test key runs in two steps: first it checks that Google answers at all (10 s, no generation), then it asks Gemini for one real spark (60 s). The details then say which step failed and how long Google took.
     - **Test key** and **Remove key** buttons, and a link to the AI Studio key page.
     - Status messages: works / not accepted / model not found / network, plus Google's own error text ("Details: …", key removed) and the last problem seen while drawing sparks.
     - **Advanced → model id** (blank = default) and the privacy note.
@@ -36,7 +36,7 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
     - The key is never held in app state, logged, put in a URL or in an error; tests check this.
   - **Gemini** (`src/ai/gemini.ts`):
     - Plain `fetch` to the REST API; the key only in the `x-goog-api-key` header.
-    - `responseSchema` JSON output, a 30 s timeout.
+    - `responseSchema` JSON output, a 60 s timeout for generation.
     - `thinkingLevel: "low"` for Gemini 3+ models: 3.8 Flash thinks at "medium" by default, which made the first answers slow. Older models don't get the field.
     - The one model constant is `DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash'` (free tier, checked 2026-11-15).
   - **Batching and queue** (`src/sparks/source.ts`):

@@ -222,16 +222,68 @@ describe('generateSparks', () => {
 });
 
 describe('testKey', () => {
-  it('asks Gemini for one real spark, so it proves generation works', async () => {
+  it('first checks Google is reachable, then asks Gemini for one real spark', async () => {
     const { provider, fetch } = setup(answer([{ type: 'hotTake', text: 'Toast is underrated.' }]));
     await expect(provider.testKey()).resolves.toBeUndefined();
-    const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
-    expect(url).toBe(
+    const [check, generate] = fetch.mock.calls as unknown as [string, RequestInit][];
+    expect(check?.[0]).toBe(
+      `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}`,
+    );
+    expect(check?.[1].method).toBe('GET');
+    expect(generate?.[0]).toBe(
       `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}:generateContent`,
     );
-    expect(init.method).toBe('POST');
-    expect(init.headers).toEqual({ 'x-goog-api-key': KEY, 'content-type': 'application/json' });
-    expect(String(init.body)).toContain('Write 1 spark.');
+    expect(generate?.[1].method).toBe('POST');
+    expect(generate?.[1].headers).toEqual({
+      'x-goog-api-key': KEY,
+      'content-type': 'application/json',
+    });
+    expect(String(generate?.[1].body)).toContain('Write 1 spark.');
+  });
+
+  function hangingFetch(hangOn: 'GET' | 'POST') {
+    return jest.fn(
+      (_url: string, init: RequestInit) =>
+        new Promise<Response>((resolve, reject) => {
+          if (init.method !== hangOn) {
+            resolve(answer([{ type: 'hotTake', text: 'Toast is underrated.' }]));
+            return;
+          }
+          init.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+        }),
+    );
+  }
+
+  it('says when Google cannot be reached at all', async () => {
+    const provider = createGeminiProvider({
+      apiKey: KEY,
+      fetch: hangingFetch('GET') as unknown as typeof globalThis.fetch,
+      connectTimeoutMs: 10,
+    });
+    const error = await errorOf(provider.testKey());
+    expect(error.kind).toBe('network');
+    expect(error.detail).toMatch(
+      /^Could not reach Google: No answer within 0 s\. Check the internet/,
+    );
+  });
+
+  it('says when Google is reachable but Gemini does not answer in time', async () => {
+    let clock = 0;
+    const fetch = hangingFetch('POST');
+    const provider = createGeminiProvider({
+      apiKey: KEY,
+      fetch: ((url: string, init: RequestInit) => {
+        clock += 400;
+        return fetch(url, init);
+      }) as unknown as typeof globalThis.fetch,
+      timeoutMs: 10,
+      now: () => clock,
+    });
+    const error = await errorOf(provider.testKey());
+    expect(error.kind).toBe('network');
+    expect(error.detail).toMatch(
+      /^Google answered in 0\.4 s, but Gemini did not write a test spark \(No answer within 0 s\.\)/,
+    );
   });
 
   it('fails when the answer has no usable spark', async () => {
@@ -261,7 +313,7 @@ describe('testKey', () => {
       'models/gemini-2.5-flash',
     );
     await provider.testKey();
-    const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    const [url, init] = fetch.mock.calls[1] as unknown as [string, RequestInit];
     expect(url).toBe(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
     );

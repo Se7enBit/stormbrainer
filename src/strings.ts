@@ -54,7 +54,8 @@ export const strings = {
     modelNotFound:
       'That model id was not found. Check it under Advanced, or clear it to use the default.',
     quota: 'The free AI quota is used up for now, so sparks come from the offline deck.',
-    network: 'Could not reach the AI, so sparks come from the offline deck.',
+    network:
+      'Gemini could not be reached or did not answer in time, so sparks come from the offline deck.',
     blocked: 'The AI did not return usable sparks, so sparks come from the offline deck.',
     badResponse: 'The AI sent something unexpected, so sparks come from the offline deck.',
   } satisfies Record<AiErrorKind, string>,
