@@ -86,7 +86,7 @@ describe('SparkSource without a key', () => {
     const waits = jest.fn();
     const result = await source.next({ filters: defaultFilters }, emptyHistory, null, waits);
     expect(result?.spark.source).toBe('deck');
-    expect(result?.aiError).toBeUndefined();
+    expect(result?.aiProblem?.kind).toBeUndefined();
     expect(waits).not.toHaveBeenCalled();
   });
 });
@@ -107,6 +107,22 @@ describe('SparkSource with a key', () => {
       avoid: [],
     });
     expect(ANGLES).toContain(requests[0]?.angle);
+  });
+
+  it('prefetch fills the queue so the first tap is an AI card without waiting', async () => {
+    const { source, tap, requests, waits } = setup();
+    source.prefetch({ filters: defaultFilters }, emptyHistory);
+    source.prefetch({ filters: defaultFilters }, emptyHistory);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(requests).toHaveLength(1);
+    const first = await tap();
+    expect(first.spark.source).toBe('ai');
+    expect(waits).not.toHaveBeenCalled();
+  });
+
+  it('carries the provider detail with a fallback', async () => {
+    const { tap } = setup([new AiError('quota', 429, 'Quota exceeded.')]);
+    expect((await tap()).aiProblem).toEqual({ kind: 'quota', detail: 'Quota exceeded.' });
   });
 
   it('serves taps from the queue and refills in the background when one is left', async () => {
@@ -156,7 +172,7 @@ describe('SparkSource with a key', () => {
       const { tap, requests, advance } = setup([...script]);
       const fallback = await tap();
       expect(fallback.spark.source).toBe('deck');
-      expect(fallback.aiError).toBe(kind);
+      expect(fallback.aiProblem?.kind).toBe(kind);
       const calls = requests.length;
 
       advance(cooldown - 1);
@@ -166,7 +182,7 @@ describe('SparkSource with a key', () => {
       advance(1);
       const back = await tap();
       expect(back.spark.source).toBe('ai');
-      expect(back.aiError).toBeUndefined();
+      expect(back.aiProblem?.kind).toBeUndefined();
     },
   );
 
@@ -174,7 +190,7 @@ describe('SparkSource with a key', () => {
     'stops calling AI after %s until the key or model changes',
     async (kind) => {
       const { source, tap, requests, advance } = setup([kind]);
-      expect((await tap()).aiError).toBe(kind);
+      expect((await tap()).aiProblem?.kind).toBe(kind);
       advance(QUOTA_COOLDOWN_MS * 10);
       expect((await tap()).spark.source).toBe('deck');
       expect(requests).toHaveLength(1);
@@ -186,7 +202,7 @@ describe('SparkSource with a key', () => {
 
   it('treats an unexpected error as a bad response instead of crashing', async () => {
     const { tap } = setup([new TypeError('boom')]);
-    expect((await tap()).aiError).toBe('badResponse');
+    expect((await tap()).aiProblem?.kind).toBe('badResponse');
   });
 
   it('shows a deck card when AI is slow, and the AI card on a later tap', async () => {
@@ -197,7 +213,7 @@ describe('SparkSource with a key', () => {
     const { tap, requests } = setup([slow], 20);
     const first = await tap();
     expect(first.spark.source).toBe('deck');
-    expect(first.aiError).toBeUndefined();
+    expect(first.aiProblem?.kind).toBeUndefined();
 
     resolve(aiBatch(requests[0]!));
     await new Promise((r) => setTimeout(r, 0));
@@ -217,7 +233,7 @@ describe('SparkSource with a key', () => {
     await new Promise((r) => setTimeout(r, 0));
     const result = await tap();
     expect(result.spark.source).toBe('deck');
-    expect(result.aiError).toBeUndefined();
+    expect(result.aiProblem?.kind).toBeUndefined();
   });
 
   it('skips queued sparks that were already shown', async () => {

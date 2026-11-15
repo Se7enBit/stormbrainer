@@ -1,6 +1,6 @@
-import type { Spark, SparkRequest } from '../sparks/types';
+import { SPARK_TYPES, type Spark, type SparkRequest } from '../sparks/types';
 import { parseSparks } from './parse';
-import { buildGenerateContentBody } from './prompt';
+import { buildGenerateContentBody, type ThinkingLevel } from './prompt';
 import { AiError, type AiErrorKind, type AiProvider } from './provider';
 
 /**
@@ -13,7 +13,28 @@ export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 /** Where users create a key (linked from Settings). */
 export const API_KEY_URL = 'https://aistudio.google.com/apikey';
-const DEFAULT_TIMEOUT_MS = 15_000;
+/** Generous: a thinking model can take a while for a batch. Taps never wait this long. */
+const DEFAULT_TIMEOUT_MS = 30_000;
+const MAX_DETAIL_LENGTH = 160;
+
+/**
+ * Gemini 3+ models think before answering ("medium" by default), which is slow for short
+ * sparks. "low" is their fastest accepted level ("minimal" is rejected by 3.8 Flash).
+ * Older models do not take thinkingLevel, so it is only sent to 3+.
+ */
+export function thinkingLevelFor(model: string): ThinkingLevel | undefined {
+  return /^gemini-([3-9]|\d{2,})/.test(model) ? 'low' : undefined;
+}
+
+/** A tiny real request for Test key: proves key, model and request format all work. */
+const TEST_REQUEST: SparkRequest = {
+  types: [...SPARK_TYPES],
+  vibe: 'light',
+  workSafe: true,
+  angle: 'food and cooking',
+  avoid: [],
+  count: 1,
+};
 
 export interface GeminiOptions {
   apiKey: string;
@@ -29,6 +50,7 @@ export interface GeminiOptions {
 interface GenerateContentResponse {
   promptFeedback?: { blockReason?: string };
   candidates?: {
+    finishReason?: string;
     content?: { parts?: { text?: string; thought?: boolean }[] };
   }[];
 }
@@ -58,6 +80,14 @@ export function errorKindForResponse(status: number, body: unknown): AiErrorKind
   return 'badResponse';
 }
 
+/** The provider's error message, one line, short, with the key removed. */
+export function safeDetail(message: unknown, apiKey: string): string | undefined {
+  if (typeof message !== 'string' || !message.trim()) return undefined;
+  let text = message.replace(/\s+/g, ' ').trim();
+  if (apiKey) text = text.split(apiKey).join('[key]');
+  return text.length > MAX_DETAIL_LENGTH ? `${text.slice(0, MAX_DETAIL_LENGTH - 1)}…` : text;
+}
+
 let idCounter = 0;
 function defaultNewId(): string {
   idCounter += 1;
@@ -73,6 +103,7 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const newId = options.newId ?? defaultNewId;
   const modelPath = `models/${encodeURIComponent(model)}`;
+  const thinkingLevel = thinkingLevelFor(model);
 
   async function call(path: string, body?: unknown): Promise<unknown> {
     const controller = new AbortController();
@@ -89,8 +120,11 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
         signal: controller.signal,
       });
     } catch {
-      // Offline, DNS, CORS or our timeout: all the same to the user.
-      throw new AiError('network');
+      // Offline, DNS, CORS or our timeout: all the same to the user, but say which.
+      const detail = controller.signal.aborted
+        ? `No answer within ${Math.round(timeoutMs / 1000)} s.`
+        : 'Could not connect.';
+      throw new AiError('network', undefined, detail);
     } finally {
       clearTimeout(timer);
     }
@@ -102,37 +136,47 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
       if (response.ok) throw new AiError('badResponse', response.status);
     }
     if (!response.ok) {
-      throw new AiError(errorKindForResponse(response.status, data), response.status);
+      const detail = safeDetail((data as ErrorBody | null)?.error?.message, options.apiKey);
+      throw new AiError(errorKindForResponse(response.status, data), response.status, detail);
     }
     return data;
   }
 
+  async function generateSparks(request: SparkRequest): Promise<Spark[]> {
+    const data = (await call(
+      `${modelPath}:generateContent`,
+      buildGenerateContentBody(request, { thinkingLevel }),
+    )) as GenerateContentResponse | null;
+
+    const blockReason = data?.promptFeedback?.blockReason;
+    if (blockReason) throw new AiError('blocked', undefined, `Prompt blocked: ${blockReason}.`);
+    const candidate = data?.candidates?.[0];
+    // Thinking models may return "thought" parts before the answer; only the answer counts.
+    const text = (candidate?.content?.parts ?? [])
+      .filter((part) => !part.thought && typeof part.text === 'string')
+      .map((part) => part.text)
+      .join('');
+    // No text: blocked by safety filters or simply empty; both are handled the same way.
+    if (!text) {
+      const reason = candidate?.finishReason;
+      throw new AiError(
+        'blocked',
+        undefined,
+        reason ? `Finished with ${reason}.` : 'Empty answer.',
+      );
+    }
+
+    const sparks = parseSparks(text, request, newId);
+    if (sparks.length === 0)
+      throw new AiError('blocked', undefined, 'No usable sparks in the answer.');
+    return sparks;
+  }
+
   return {
-    async generateSparks(request: SparkRequest): Promise<Spark[]> {
-      const data = (await call(
-        `${modelPath}:generateContent`,
-        buildGenerateContentBody(request),
-      )) as GenerateContentResponse | null;
-
-      if (data?.promptFeedback?.blockReason) throw new AiError('blocked');
-      const candidate = data?.candidates?.[0];
-      // Thinking models may return "thought" parts before the answer; only the answer counts.
-      const text = (candidate?.content?.parts ?? [])
-        .filter((part) => !part.thought && typeof part.text === 'string')
-        .map((part) => part.text)
-        .join('');
-      // No text: blocked by safety filters or simply empty; both are handled the same way.
-      if (!text) throw new AiError('blocked');
-
-      const sparks = parseSparks(text, request, newId);
-      if (sparks.length === 0) throw new AiError('blocked');
-      return sparks;
-    },
-
+    generateSparks,
     async testKey(): Promise<void> {
-      // Reading the model's metadata is the smallest request that proves key and model work,
-      // and it costs no generation quota.
-      await call(modelPath);
+      // One real spark: a metadata read would pass even when generation itself fails.
+      await generateSparks(TEST_REQUEST);
     },
   };
 }

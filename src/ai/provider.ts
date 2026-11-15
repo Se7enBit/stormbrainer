@@ -18,19 +18,32 @@ export const AI_ERROR_KINDS = [
 export type AiErrorKind = (typeof AI_ERROR_KINDS)[number];
 
 /**
- * An AI failure. Carries only the kind and HTTP status: never the key, the request or the raw
- * response, so it is always safe to show or log.
+ * An AI failure: the kind, the HTTP status, and a short `detail` for Settings (the provider's
+ * own error message with the key removed). Never the key, the request or the raw response.
  */
 export class AiError extends Error {
   readonly kind: AiErrorKind;
   readonly status?: number;
+  readonly detail?: string;
 
-  constructor(kind: AiErrorKind, status?: number) {
+  constructor(kind: AiErrorKind, status?: number, detail?: string) {
     super(status === undefined ? `AI error: ${kind}` : `AI error: ${kind} (HTTP ${status})`);
     this.name = 'AiError';
     this.kind = kind;
     this.status = status;
+    this.detail = detail;
   }
+}
+
+/** A problem to show the user: what kind, and the provider's own words if any. */
+export interface AiProblem {
+  kind: AiErrorKind;
+  detail?: string;
+}
+
+export function toAiProblem(error: unknown): AiProblem {
+  if (isAiError(error)) return { kind: error.kind, detail: error.detail };
+  return { kind: 'badResponse' };
 }
 
 export function isAiError(error: unknown): error is AiError {
@@ -41,6 +54,6 @@ export function isAiError(error: unknown): error is AiError {
 export interface AiProvider {
   /** One request for `request.count` sparks. Throws AiError; may return fewer than asked. */
   generateSparks(request: SparkRequest): Promise<Spark[]>;
-  /** Cheap check that the key (and model) work. Resolves or throws AiError. */
+  /** Proves the key, model and request format work (one tiny real request). Throws AiError. */
   testKey(): Promise<void>;
 }

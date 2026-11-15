@@ -5,6 +5,8 @@ import {
   createGeminiProvider,
   errorKindForResponse,
   resolveModel,
+  safeDetail,
+  thinkingLevelFor,
 } from './gemini';
 import { buildGenerateContentBody } from './prompt';
 import { AI_ERROR_KINDS, AiError, type AiErrorKind } from './provider';
@@ -76,7 +78,13 @@ describe('generateSparks', () => {
     expect(url).not.toContain(KEY);
     expect(init.method).toBe('POST');
     expect(init.headers).toEqual({ 'x-goog-api-key': KEY, 'content-type': 'application/json' });
-    expect(JSON.parse(init.body as string)).toEqual(buildGenerateContentBody(request));
+    expect(JSON.parse(init.body as string)).toEqual(
+      buildGenerateContentBody(request, { thinkingLevel: 'low' }),
+    );
+    // Gemini 3.x thinks at "medium" by default; low keeps the first card fast.
+    expect(JSON.parse(init.body as string).generationConfig.thinkingConfig).toEqual({
+      thinkingLevel: 'low',
+    });
   });
 
   it('returns parsed AI sparks and ignores thought parts', async () => {
@@ -195,7 +203,9 @@ describe('generateSparks', () => {
       fetch: fetch as unknown as typeof globalThis.fetch,
       timeoutMs: 10,
     });
-    expect((await errorOf(provider.generateSparks(request))).kind).toBe('network');
+    const error = await errorOf(provider.generateSparks(request));
+    expect(error.kind).toBe('network');
+    expect(error.detail).toBe('No answer within 0 s.');
   });
 
   it('never puts the key in an error', async () => {
@@ -207,37 +217,74 @@ describe('generateSparks', () => {
     expect(String(error)).not.toContain(KEY);
     expect(JSON.stringify(error)).not.toContain(KEY);
     expect(error.stack ?? '').not.toContain(KEY);
+    expect(error.detail).toBe('API key not valid: [key]');
   });
 });
 
 describe('testKey', () => {
-  it('reads the model metadata with a GET', async () => {
-    const { provider, fetch } = setup(
-      jsonResponse(200, { name: `models/${DEFAULT_GEMINI_MODEL}` }),
-    );
+  it('asks Gemini for one real spark, so it proves generation works', async () => {
+    const { provider, fetch } = setup(answer([{ type: 'hotTake', text: 'Toast is underrated.' }]));
     await expect(provider.testKey()).resolves.toBeUndefined();
     const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe(
-      `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}:generateContent`,
     );
-    expect(init.method).toBe('GET');
-    expect(init.headers).toEqual({ 'x-goog-api-key': KEY });
-    expect(init.body).toBeUndefined();
+    expect(init.method).toBe('POST');
+    expect(init.headers).toEqual({ 'x-goog-api-key': KEY, 'content-type': 'application/json' });
+    expect(String(init.body)).toContain('Write 1 spark.');
   });
 
-  it('reports a rejected key', async () => {
+  it('fails when the answer has no usable spark', async () => {
+    const { provider } = setup(answer([]));
+    const error = await errorOf(provider.testKey());
+    expect(error.kind).toBe('blocked');
+    expect(error.detail).toBe('No usable sparks in the answer.');
+  });
+
+  it("reports a rejected key with Google's own message", async () => {
     const { provider } = setup(
-      jsonResponse(400, { error: { details: [{ reason: 'API_KEY_INVALID' }] } }),
+      jsonResponse(400, {
+        error: {
+          message: 'API key not valid. Please pass a valid API key.',
+          details: [{ reason: 'API_KEY_INVALID' }],
+        },
+      }),
     );
-    expect((await errorOf(provider.testKey())).kind).toBe('invalidKey');
+    const error = await errorOf(provider.testKey());
+    expect(error.kind).toBe('invalidKey');
+    expect(error.detail).toBe('API key not valid. Please pass a valid API key.');
   });
 
-  it('uses the model override from Settings', async () => {
-    const { provider, fetch } = setup(jsonResponse(200, {}), 'models/gemini-custom');
-    await provider.testKey();
-    expect((fetch.mock.calls[0] as unknown as [string])[0]).toBe(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-custom',
+  it('uses the model override from Settings, without thinkingLevel for older models', async () => {
+    const { provider, fetch } = setup(
+      answer([{ type: 'hotTake', text: 'Toast is underrated.' }]),
+      'models/gemini-2.5-flash',
     );
+    await provider.testKey();
+    const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+    );
+    expect(JSON.parse(String(init.body)).generationConfig.thinkingConfig).toBeUndefined();
+  });
+});
+
+describe('thinkingLevelFor', () => {
+  it('asks Gemini 3 and later for low thinking only', () => {
+    expect(thinkingLevelFor('gemini-3.8-flash')).toBe('low');
+    expect(thinkingLevelFor('gemini-4-argon')).toBe('low');
+    expect(thinkingLevelFor('gemini-12-pro')).toBe('low');
+    expect(thinkingLevelFor('gemini-2.5-flash')).toBeUndefined();
+    expect(thinkingLevelFor('custom-model')).toBeUndefined();
+  });
+});
+
+describe('safeDetail', () => {
+  it('keeps one short line and never the key', () => {
+    expect(safeDetail(`Bad\n key ${KEY} here`, KEY)).toBe('Bad key [key] here');
+    expect(safeDetail('x'.repeat(300), KEY)).toHaveLength(160);
+    expect(safeDetail(undefined, KEY)).toBeUndefined();
+    expect(safeDetail('  ', KEY)).toBeUndefined();
   });
 });
 
