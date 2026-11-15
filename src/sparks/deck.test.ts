@@ -1,8 +1,9 @@
 import rawDeck from './deck.json';
-import { deck, deckEntryProblems, deckPool, drawFromDeck, matchesFilters } from './deck';
+import { deck, deckPool, drawFromDeck, matchesFilters } from './deck';
 import { defaultFilters } from './filters';
 import { emptyHistory, normalizeText, type History } from './history';
 import { SPARK_TYPES, VIBES, type Spark, type SparkFilters } from './types';
+import { sparkProblems } from './validate';
 
 /** Deterministic random numbers for repeatable draws. */
 function seededRandom(seed: number): () => number {
@@ -32,7 +33,7 @@ describe('deck.json', () => {
   });
 
   it.each(rawDeck.map((entry) => [entry.id, entry]))('entry %s is valid', (_id, entry) => {
-    expect(deckEntryProblems(entry)).toEqual([]);
+    expect(sparkProblems(entry)).toEqual([]);
   });
 
   it('has unique ids and unique texts', () => {
@@ -56,14 +57,14 @@ describe('deck.json', () => {
   });
 });
 
-describe('deckEntryProblems', () => {
+describe('sparkProblems', () => {
   it('reports shape and content problems', () => {
-    expect(deckEntryProblems(null)).toEqual(['not an object']);
+    expect(sparkProblems(null)).toEqual(['not an object']);
     expect(
-      deckEntryProblems({ id: 'a', type: 'debate', vibe: 'light', workSafe: true, text: 'Q?' }),
+      sparkProblems({ id: 'a', type: 'debate', vibe: 'light', workSafe: true, text: 'Q?' }),
     ).toEqual(['missing options']);
     expect(
-      deckEntryProblems({
+      sparkProblems({
         id: 'a',
         type: 'hotTake',
         vibe: 'mild',
@@ -78,7 +79,7 @@ describe('deckEntryProblems', () => {
       'options not allowed for hotTake',
     ]);
     expect(
-      deckEntryProblems({
+      sparkProblems({
         id: 'a',
         type: 'whatIf',
         vibe: 'deep',
