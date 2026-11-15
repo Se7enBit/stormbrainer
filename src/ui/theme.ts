@@ -18,6 +18,8 @@ export const typeColors: Record<SparkType, string> = {
   memoryLane: '#C49BFF',
   whatIf: '#6EE7A8',
   idea: '#F472B6',
+  answer: '#2DD4BF',
+  fortune: '#FBBF24',
 };
 
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;

@@ -1,16 +1,28 @@
 /** Every kind of card. Each belongs to exactly one mode (MODE_TYPES). */
-export const SPARK_TYPES = ['debate', 'hotTake', 'memoryLane', 'whatIf', 'idea'] as const;
+export const SPARK_TYPES = [
+  'debate',
+  'hotTake',
+  'memoryLane',
+  'whatIf',
+  'idea',
+  'answer',
+  'fortune',
+] as const;
 export type SparkType = (typeof SPARK_TYPES)[number];
 
 /** What the big button gives (SPEC §9). */
-export const MODES = ['sparks', 'brainstorm'] as const;
+export const MODES = ['sparks', 'brainstorm', 'oracle'] as const;
 export type Mode = (typeof MODES)[number];
 
 /** The card types of each mode. Sparks' types are the type chips; other modes have one type. */
 export const MODE_TYPES: Record<Mode, readonly SparkType[]> = {
   sparks: ['debate', 'hotTake', 'memoryLane', 'whatIf'],
   brainstorm: ['idea'],
+  oracle: ['answer', 'fortune'],
 };
+
+/** Oracle's two chips: Ask gives an answer, Fortune a fortune. */
+export type OracleType = 'answer' | 'fortune';
 
 export function modeOf(type: SparkType): Mode {
   return MODES.find((mode) => MODE_TYPES[mode].includes(type)) ?? 'sparks';

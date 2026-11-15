@@ -13,6 +13,7 @@ import { useSparkStore } from '../src/store/sparkStore';
 import { ChipsStrip } from '../src/ui/ChipsStrip';
 import { ContextBox } from '../src/ui/ContextBox';
 import { ModeChips } from '../src/ui/ModeChips';
+import { OracleChips } from '../src/ui/OracleChips';
 import { TopicBox } from '../src/ui/TopicBox';
 import { InstallBanner } from '../src/ui/InstallBanner';
 import { SourceStatus } from '../src/ui/SourceStatus';
@@ -36,6 +37,8 @@ export default function Home() {
   const setMode = useSparkStore((s) => s.setMode);
   const topic = useSparkStore((s) => s.topic);
   const setTopic = useSparkStore((s) => s.setTopic);
+  const oracleType = useSparkStore((s) => s.oracleType);
+  const setOracleType = useSparkStore((s) => s.setOracleType);
   const hasKey = useSettingsStore((s) => s.hasKey);
   const lastProblem = useSettingsStore((s) => s.lastProblem);
   const keyStatus = useSettingsStore((s) => s.keyStatus);
@@ -58,7 +61,7 @@ export default function Home() {
   const showingHome = current === null;
   useEffect(() => {
     if (hasKey && showingHome) prefetch();
-  }, [hasKey, showingHome, mode, filters, context, topic, prefetch]);
+  }, [hasKey, showingHome, mode, filters, oracleType, context, topic, prefetch]);
 
   // Android back closes the card instead of leaving the app.
   useEffect(() => {
@@ -110,6 +113,7 @@ export default function Home() {
       </View>
       <View style={styles.controls}>
         {mode === 'brainstorm' && <TopicBox value={topic} onChange={setTopic} />}
+        {mode === 'oracle' && <OracleChips value={oracleType} onChange={setOracleType} />}
         <ChipsStrip
           filters={filters}
           onToggleType={toggleType}

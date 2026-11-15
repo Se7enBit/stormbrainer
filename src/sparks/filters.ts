@@ -1,4 +1,11 @@
-import { MODE_TYPES, modeOf, type Mode, type SparkFilters, type SparkType } from './types';
+import {
+  MODE_TYPES,
+  modeOf,
+  type Mode,
+  type OracleType,
+  type SparkFilters,
+  type SparkType,
+} from './types';
 
 /** Sparks' type chips. */
 const CHIP_TYPES = MODE_TYPES.sparks;
@@ -26,9 +33,18 @@ export function toggleType(types: readonly SparkType[], type: SparkType): SparkT
   return CHIP_TYPES.filter((t) => next.includes(t));
 }
 
-/** The filters a draw uses: Sparks uses the type chips, other modes their own card type. */
-export function filtersForMode(mode: Mode, filters: SparkFilters): SparkFilters {
-  return mode === 'sparks' ? filters : { ...filters, types: [...MODE_TYPES[mode]] };
+/**
+ * The filters a draw uses: Sparks uses the type chips, Oracle its Ask/Fortune chip, other
+ * modes their own card type.
+ */
+export function filtersForMode(
+  mode: Mode,
+  filters: SparkFilters,
+  oracleType: OracleType = 'answer',
+): SparkFilters {
+  if (mode === 'sparks') return filters;
+  if (mode === 'oracle') return { ...filters, types: [oracleType] };
+  return { ...filters, types: [...MODE_TYPES[mode]] };
 }
 
 export { modeOf };

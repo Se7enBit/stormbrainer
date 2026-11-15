@@ -1,6 +1,7 @@
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import { deck } from './sparks/deck';
+import { MODE_TYPES } from './sparks/types';
 import { useSparkStore } from './store/sparkStore';
 import { strings } from './strings';
 
@@ -48,7 +49,9 @@ describe('home screen', () => {
     await fireEvent.press(sparkButton());
     const seen = new Set([currentSpark().id]);
     // Default settings: all types, light vibe.
-    const poolSize = deck.filter((s) => s.vibe === 'light' && s.type !== 'idea').length;
+    const poolSize = deck.filter(
+      (s) => s.vibe === 'light' && MODE_TYPES.sparks.includes(s.type),
+    ).length;
     for (let i = 1; i < poolSize; i++) {
       await fireEvent.press(screen.getByRole('button', { name: strings.card.next }));
       seen.add(currentSpark().id);

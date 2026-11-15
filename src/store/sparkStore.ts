@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import type { AiProblem } from '../ai/provider';
 import { defaultFilters, filtersForMode, toggleType } from '../sparks/filters';
 import { emptyHistory, recordShown, type History } from '../sparks/history';
-import type { Mode, Spark, SparkFilters, SparkType, Vibe } from '../sparks/types';
+import type { Mode, OracleType, Spark, SparkFilters, SparkType, Vibe } from '../sparks/types';
 import { sparkSource } from './ai';
 import { useSettingsStore } from './settingsStore';
 
@@ -13,6 +13,8 @@ interface SparkState {
   filters: SparkFilters;
   /** Brainstorm topic for AI ideas. */
   topic: string;
+  /** Oracle's chip: Ask (answers) or Fortune. */
+  oracleType: OracleType;
   /** One-line group context for AI sparks. */
   context: string;
   /** The card on screen, or null for the home screen. */
@@ -40,6 +42,7 @@ interface SparkState {
   setContext: (context: string) => void;
   setMode: (mode: Mode) => void;
   setTopic: (topic: string) => void;
+  setOracleType: (oracleType: OracleType) => void;
 }
 
 export const useSparkStore = create<SparkState>()((set, get) => {
@@ -49,8 +52,8 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     if (busy) return;
     busy = true;
     try {
-      const { mode, filters, context, topic, history, current } = get();
-      const settings = { mode, filters: filtersForMode(mode, filters), context, topic };
+      const { mode, filters, oracleType, context, topic, history, current } = get();
+      const settings = { mode, filters: filtersForMode(mode, filters, oracleType), context, topic };
       const result = await sparkSource.next(settings, history, current, () =>
         set({ loading: true }),
       );
@@ -71,6 +74,7 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     mode: 'sparks',
     filters: defaultFilters,
     topic: '',
+    oracleType: 'answer',
     context: '',
     current: null,
     history: emptyHistory,
@@ -78,9 +82,9 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     aiProblem: null,
     next: draw,
     prefetch: () => {
-      const { mode, filters, context, topic, history } = get();
+      const { mode, filters, oracleType, context, topic, history } = get();
       sparkSource.prefetch(
-        { mode, filters: filtersForMode(mode, filters), context, topic },
+        { mode, filters: filtersForMode(mode, filters, oracleType), context, topic },
         history,
       );
     },
@@ -96,5 +100,6 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     setContext: (context) => set({ context }),
     setMode: (mode) => set({ mode }),
     setTopic: (topic) => set({ topic }),
+    setOracleType: (oracleType) => set({ oracleType }),
   };
 });

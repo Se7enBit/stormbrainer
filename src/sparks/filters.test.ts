@@ -33,3 +33,10 @@ describe('filtersForMode', () => {
     expect(filtersForMode('brainstorm', filters)).toEqual({ ...filters, types: ['idea'] });
   });
 });
+
+describe('filtersForMode for Oracle', () => {
+  it('uses the Ask/Fortune chip as the only type', () => {
+    expect(filtersForMode('oracle', defaultFilters).types).toEqual(['answer']);
+    expect(filtersForMode('oracle', defaultFilters, 'fortune').types).toEqual(['fortune']);
+  });
+});
