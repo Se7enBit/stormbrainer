@@ -11,6 +11,8 @@ import { AiError, type AiErrorKind, type AiProvider } from './provider';
 export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
 
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+/** Where users create a key (linked from Settings). */
+export const API_KEY_URL = 'https://aistudio.google.com/apikey';
 const DEFAULT_TIMEOUT_MS = 15_000;
 
 export interface GeminiOptions {
@@ -65,7 +67,9 @@ function defaultNewId(): string {
 /** Gemini via plain fetch to the REST API. The key travels only in the x-goog-api-key header. */
 export function createGeminiProvider(options: GeminiOptions): AiProvider {
   const model = resolveModel(options.model);
-  const fetchFn = options.fetch ?? fetch;
+  // Wrapped so the global fetch is always called with the right `this`.
+  const fetchFn =
+    options.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const newId = options.newId ?? defaultNewId;
   const modelPath = `models/${encodeURIComponent(model)}`;

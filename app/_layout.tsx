@@ -1,7 +1,9 @@
 import { DarkTheme, Link, Stack, ThemeProvider, type Theme } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useSettingsStore } from '../src/store/settingsStore';
 import { strings } from '../src/strings';
 import { colors, spacing } from '../src/ui/theme';
 
@@ -22,6 +24,11 @@ const theme: Theme = {
 export const unstable_settings = { initialRouteName: 'index' };
 
 export default function RootLayout() {
+  // Read the saved key and model once at startup.
+  useEffect(() => {
+    void useSettingsStore.getState().load();
+  }, []);
+
   return (
     <ThemeProvider value={theme}>
       <StatusBar style="light" />
