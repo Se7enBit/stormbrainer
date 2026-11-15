@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9): framework + Brainstorm done, Oracle next._
+_Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9) done: Sparks, Brainstorm, Oracle._
 
 ## What works
 
@@ -14,7 +14,7 @@ _Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9): frame
 - **Modes (SPEC §9):** mode chips above the Spark button. Each mode has its own offline deck and AI prompt; Saved, history, Vibe and work-safe apply to all.
   - **Sparks:** the conversation cards below (type chips, group context).
   - **Brainstorm:** a topic box ("What are you brainstorming?") instead of type chips and context. With a key, each card is one concrete idea about the topic (Light = practical, Deep = thoughtful, Spicy = wild); with no topic, creativity prompts. Without a key, 40 bundled creativity prompts, and the status line says a key adds topic ideas. Cards are type `idea`, pink, with a "Yes, and…?" hint.
-  - **Oracle** (next): Ask (yes/no answers) and Fortune (fortune-cookie lines), tone following the Vibe chips.
+  - **Oracle:** Ask · Fortune chips with a one-line hint. **Ask**: someone asks a yes/no question out loud and the card answers it (yes, no or maybe, ≤ 80 chars, works for any question since the app never hears it). **Fortune**: a fortune-cookie line. Tone follows the Vibe chips (Light = playful, Deep = mystical, Spicy = cheeky). Original lines only: 36 answers and 36 fortunes bundled, and the AI prompt forbids predictions of illness, death, accidents, disasters or money.
 - **Cards (F1):** Spark → a full-screen card. Layout depends on type:
   - Debate: A vs B sides.
   - Hot take: "Agree or disagree?" hint.
@@ -96,8 +96,7 @@ _Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9): frame
 
 Following SPEC.md §8:
 
-1. **Oracle mode** (SPEC §9): Ask · Fortune chips, its own deck and prompt.
-2. **Check on a device:** install the APK and try the key, haptics and keep-awake; paste a real key on the preview.
+1. **Check on a device:** install the APK and try the key, haptics and keep-awake; paste a real key on the preview.
 2. **Milestone 5 (field test):** use it on a real group night; tune prompts, angles and the deck from what landed.
 3. **Optional:** EAS builds instead of the GitHub-built APK need an Expo account. Run `eas init` once (it adds the project id to `app.json`), then `eas build -p android --profile preview`.
 

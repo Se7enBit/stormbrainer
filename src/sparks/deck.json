@@ -1401,5 +1401,509 @@
     "vibe": "spicy",
     "workSafe": false,
     "text": "Plan the most chaotic hen or stag party theme that is still legal."
+  },
+  {
+    "id": "a01",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Yes, and you knew that already."
+  },
+  {
+    "id": "a02",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Absolutely, go for it."
+  },
+  {
+    "id": "a03",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Nope. Not even a little."
+  },
+  {
+    "id": "a04",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Yes, but only after snacks."
+  },
+  {
+    "id": "a05",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "The answer is a loud, happy yes."
+  },
+  {
+    "id": "a06",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "No, and the cat agrees."
+  },
+  {
+    "id": "a07",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Maybe. Flip a coin and trust the coin."
+  },
+  {
+    "id": "a08",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Yes, with extra sprinkles on top."
+  },
+  {
+    "id": "a09",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Not today. Try again on Thursday."
+  },
+  {
+    "id": "a10",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "That is a big thumbs up from the universe."
+  },
+  {
+    "id": "a11",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Hard pass."
+  },
+  {
+    "id": "a12",
+    "type": "answer",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Too close to call. Ask again, louder."
+  },
+  {
+    "id": "a13",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The stars line up: yes."
+  },
+  {
+    "id": "a14",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The mists part slowly, and they say no."
+  },
+  {
+    "id": "a15",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The cards whisper yes, but softly."
+  },
+  {
+    "id": "a16",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The moon is undecided. Wait until it grows."
+  },
+  {
+    "id": "a17",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "An old owl nods. That means yes."
+  },
+  {
+    "id": "a18",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The tea leaves say no, and they are rarely wrong."
+  },
+  {
+    "id": "a19",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The river flows toward yes."
+  },
+  {
+    "id": "a20",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The crystal clouds over. Ask again when the room is quiet."
+  },
+  {
+    "id": "a21",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Ancient wisdom says: not yet."
+  },
+  {
+    "id": "a22",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The candle flickers twice. Yes."
+  },
+  {
+    "id": "a23",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The path is blocked. Choose another."
+  },
+  {
+    "id": "a24",
+    "type": "answer",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Destiny shrugs, then smiles. Probably yes."
+  },
+  {
+    "id": "a25",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Yes, obviously. Why are you even asking?"
+  },
+  {
+    "id": "a26",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "No. And deep down you knew that."
+  },
+  {
+    "id": "a27",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Yes, but you have to explain it to everyone here."
+  },
+  {
+    "id": "a28",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Absolutely not, and please stop asking."
+  },
+  {
+    "id": "a29",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Yes, if you stop overthinking it for five minutes."
+  },
+  {
+    "id": "a30",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "No, but nice try."
+  },
+  {
+    "id": "a31",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "The Oracle is on a break. Ask someone braver."
+  },
+  {
+    "id": "a32",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Yes, and you owe the Oracle a coffee."
+  },
+  {
+    "id": "a33",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Bold question. Bold yes."
+  },
+  {
+    "id": "a34",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Yes, but maybe not after the second drink."
+  },
+  {
+    "id": "a35",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "No, and do not text them tonight."
+  },
+  {
+    "id": "a36",
+    "type": "answer",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Yes, but tell them how you feel first."
+  },
+  {
+    "id": "f01",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "A surprise snack is heading your way."
+  },
+  {
+    "id": "f02",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Today you will find something you thought you had lost."
+  },
+  {
+    "id": "f03",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Someone here will make you laugh before the night ends."
+  },
+  {
+    "id": "f04",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Your next great idea will arrive in the shower."
+  },
+  {
+    "id": "f05",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "A small adventure is hiding in your weekend."
+  },
+  {
+    "id": "f06",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "You will hear your favourite song when you least expect it."
+  },
+  {
+    "id": "f07",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "The next door you open leads somewhere good."
+  },
+  {
+    "id": "f08",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "A kind message is already on its way to you."
+  },
+  {
+    "id": "f09",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Your lucky colour this week is the one you are wearing."
+  },
+  {
+    "id": "f10",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "You will win the next argument about pizza toppings."
+  },
+  {
+    "id": "f11",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Good news travels fast, and some is travelling to you."
+  },
+  {
+    "id": "f12",
+    "type": "fortune",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Tomorrow, the bus will arrive just as you do."
+  },
+  {
+    "id": "f13",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The seed you planted quietly is about to sprout."
+  },
+  {
+    "id": "f14",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "A question you carry will answer itself this month."
+  },
+  {
+    "id": "f15",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What you give today will come back to you doubled."
+  },
+  {
+    "id": "f16",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Patience is your hidden superpower this season."
+  },
+  {
+    "id": "f17",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "An old friend is thinking of you right now."
+  },
+  {
+    "id": "f18",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The road you doubt is the one that will teach you most."
+  },
+  {
+    "id": "f19",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Slow mornings will bring clear decisions."
+  },
+  {
+    "id": "f20",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "You are closer to the finish line than you think."
+  },
+  {
+    "id": "f21",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Someone will remember a kindness you have forgotten."
+  },
+  {
+    "id": "f22",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "A conversation tonight will change your mind about something."
+  },
+  {
+    "id": "f23",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "The best chapter is the one you have not written yet."
+  },
+  {
+    "id": "f24",
+    "type": "fortune",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Listen to the quiet voice. It has been right before."
+  },
+  {
+    "id": "f25",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "You will soon be blamed for something you definitely did."
+  },
+  {
+    "id": "f26",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Your secret talent will be revealed at the worst possible moment."
+  },
+  {
+    "id": "f27",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Someone here owes you a favour. Collect it tonight."
+  },
+  {
+    "id": "f28",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "You will say something tonight that becomes a group joke for years."
+  },
+  {
+    "id": "f29",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Fortune favours the bold, and whoever is holding the snacks."
+  },
+  {
+    "id": "f30",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "A plan you laughed at will turn out to be brilliant."
+  },
+  {
+    "id": "f31",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "You will be right about something and nobody will admit it."
+  },
+  {
+    "id": "f32",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "This cookie predicts chaos, mostly yours."
+  },
+  {
+    "id": "f33",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Expect an invitation you will pretend to think about."
+  },
+  {
+    "id": "f34",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Your crush is thinking about you, or about lunch."
+  },
+  {
+    "id": "f35",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Tonight's last round will be your best decision, or your worst."
+  },
+  {
+    "id": "f36",
+    "type": "fortune",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Love is around the corner. So is a parking ticket."
   }
 ]

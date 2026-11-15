@@ -36,8 +36,22 @@ export const BRAINSTORM_INSTRUCTION = [
   'Return only JSON that matches the response schema.',
 ].join('\n');
 
+/** Oracle (SPEC §9): answers to a yes/no question asked out loud, or fortune-cookie lines. */
+export const ORACLE_INSTRUCTION = [
+  'You are the Oracle in a party app: a group asks a yes-or-no question out loud and reads your answer aloud, or asks for a fortune. You never hear the question.',
+  'answer: a short reply that clearly means yes, no or maybe, in your own words, at most 80 characters, and fits any yes-or-no question. Across a batch, mix roughly 4 yes, 4 no and 2 maybe for every 10.',
+  'fortune: one fortune-cookie line, a light prediction or a bit of wisdom, at most 120 characters.',
+  'Write original lines; do not reuse the stock answers of any fortune-telling toy.',
+  'No emojis, no numbering, no preamble. Never predict illness, death, accidents, disasters or money outcomes. Never target, mock or single out an individual. No hate or sexual content.',
+  'Every item has the requested type and no options.',
+  'Use the angle as extra inspiration. Never repeat or closely paraphrase anything in the avoid list.',
+  'Return only JSON that matches the response schema.',
+].join('\n');
+
 export function systemInstructionFor(mode: Mode): string {
-  return mode === 'brainstorm' ? BRAINSTORM_INSTRUCTION : SYSTEM_INSTRUCTION;
+  if (mode === 'brainstorm') return BRAINSTORM_INSTRUCTION;
+  if (mode === 'oracle') return ORACLE_INSTRUCTION;
+  return SYSTEM_INSTRUCTION;
 }
 
 const VIBE_GUIDE: Record<Mode, Record<Vibe, string>> = {
@@ -50,6 +64,11 @@ const VIBE_GUIDE: Record<Mode, Record<Vibe, string>> = {
     light: 'light: practical and easy to try soon',
     deep: 'deep: thoughtful and meaningful, worth real effort',
     spicy: 'spicy: bold, wild and unconventional, still possible',
+  },
+  oracle: {
+    light: 'light: playful and silly, makes people laugh',
+    deep: 'deep: mystical, a dramatic fortune-teller voice',
+    spicy: 'spicy: cheeky and a bit sassy, teasing but never mean',
   },
 };
 
@@ -64,13 +83,21 @@ export function cleanContext(context: string | undefined): string | undefined {
 }
 
 export function buildUserPrompt(request: SparkRequest): string {
+  const oracleNoun = request.types.includes('fortune') ? 'fortune' : 'answer';
   const lines =
     request.mode === 'brainstorm'
       ? [request.count === 1 ? 'Write 1 idea.' : `Write ${request.count} ideas.`]
-      : [
-          request.count === 1 ? 'Write 1 spark.' : `Write ${request.count} sparks.`,
-          `Types (spread them across these): ${request.types.join(', ')}.`,
-        ];
+      : request.mode === 'oracle'
+        ? [
+            request.count === 1
+              ? `Write 1 ${oracleNoun}.`
+              : `Write ${request.count} ${oracleNoun}s.`,
+            `Type: ${oracleNoun}.`,
+          ]
+        : [
+            request.count === 1 ? 'Write 1 spark.' : `Write ${request.count} sparks.`,
+            `Types (spread them across these): ${request.types.join(', ')}.`,
+          ];
   lines.push(
     `Vibe: ${VIBE_GUIDE[request.mode][request.vibe]}.`,
     request.workSafe ? WORK_SAFE_ON : WORK_SAFE_OFF,

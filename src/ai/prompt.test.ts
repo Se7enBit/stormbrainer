@@ -2,6 +2,7 @@ import { MODE_TYPES, SPARK_TYPES, type SparkRequest } from '../sparks/types';
 import {
   BRAINSTORM_INSTRUCTION,
   MAX_CONTEXT_LENGTH,
+  ORACLE_INSTRUCTION,
   RESPONSE_SCHEMA,
   SYSTEM_INSTRUCTION,
   buildGenerateContentBody,
@@ -123,5 +124,37 @@ describe('Brainstorm prompt', () => {
 
   it('keeps Sparks on its own instruction', () => {
     expect(systemInstructionFor('sparks')).toBe(SYSTEM_INSTRUCTION);
+  });
+});
+
+describe('Oracle prompt', () => {
+  const oracle = (type: 'answer' | 'fortune', vibe: 'light' | 'deep' | 'spicy'): SparkRequest => ({
+    mode: 'oracle',
+    types: [type],
+    vibe,
+    workSafe: false,
+    angle: 'the ocean',
+    avoid: [],
+    count: 5,
+  });
+
+  it('asks for answers or fortunes with the Oracle instruction', () => {
+    const body = buildGenerateContentBody(oracle('answer', 'deep'));
+    expect(body.systemInstruction.parts[0]?.text).toBe(ORACLE_INSTRUCTION);
+    const prompt = body.contents[0]?.parts[0]?.text ?? '';
+    expect(prompt).toContain('Write 5 answers.');
+    expect(prompt).toContain('mystical');
+    expect(buildUserPrompt(oracle('fortune', 'spicy'))).toContain('Write 5 fortunes.');
+    expect(buildUserPrompt(oracle('fortune', 'spicy'))).toContain('cheeky');
+    expect(buildUserPrompt({ ...oracle('fortune', 'light'), count: 1 })).toContain(
+      'Write 1 fortune.',
+    );
+  });
+
+  it('keeps answers general, mixed and original, and fortunes harmless', () => {
+    expect(ORACLE_INSTRUCTION).toMatch(/never hear the question/);
+    expect(ORACLE_INSTRUCTION).toMatch(/yes, no or maybe/);
+    expect(ORACLE_INSTRUCTION).toMatch(/do not reuse the stock answers/);
+    expect(ORACLE_INSTRUCTION).toMatch(/Never predict illness, death/);
   });
 });
