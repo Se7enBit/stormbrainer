@@ -4,28 +4,35 @@ import { buildGenerateContentBody, type ThinkingLevel } from './prompt';
 import { AiError, type AiErrorKind, type AiProvider } from './provider';
 
 /**
- * The default model: the one place a model name lives (Settings → Advanced can override it).
- * Free-tier models change: when touching this, confirm in Google AI Studio that it is still
- * on the free tier. Last checked 2026-11-15.
+ * The model names live here and nowhere else (Settings → Advanced can override the first).
+ * Free-tier models change: when touching these, confirm in Google AI Studio that they are
+ * still on the free tier. Last checked 2026-11-15.
+ *
+ * Default: a Flash-Lite model. Sparks are short, and on the free tier gemini-3.8-flash was
+ * too slow (no answer within 60 s on a real phone) while Flash-Lite is built for low latency.
  */
-export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
+export const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
+/** Tried automatically when the chosen model is slow, overloaded, out of quota or missing. */
+export const BACKUP_GEMINI_MODEL = 'gemini-3.8-flash';
 
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 /** Where users create a key (linked from Settings). */
 export const API_KEY_URL = 'https://aistudio.google.com/apikey';
-/** Generous: a busy model can take a while for a batch. Taps never wait this long. */
-const DEFAULT_TIMEOUT_MS = 60_000;
+/** Per model. Generous, but leaves time for the backup model; taps never wait this long. */
+const DEFAULT_TIMEOUT_MS = 40_000;
+/** Caps a runaway answer (5 short sparks need a few hundred tokens). */
+const MAX_OUTPUT_TOKENS = 2048;
 /** Test key's first step only checks that Google answers at all: that is quick or never. */
 const CONNECT_TIMEOUT_MS = 10_000;
 const MAX_DETAIL_LENGTH = 160;
 
 /**
- * Gemini 3+ models think before answering ("medium" by default), which is slow for short
- * sparks. "low" is their fastest accepted level ("minimal" is rejected by 3.8 Flash).
- * Older models do not take thinkingLevel, so it is only sent to 3+.
+ * Gemini 3+ Flash/Pro models think before answering ("medium" by default), which is slow for
+ * short sparks. "low" is their fastest accepted level ("minimal" is rejected by 3.8 Flash).
+ * Older models and Flash-Lite are sent nothing and use their own (fast) default.
  */
 export function thinkingLevelFor(model: string): ThinkingLevel | undefined {
-  return /^gemini-([3-9]|\d{2,})/.test(model) ? 'low' : undefined;
+  return /^gemini-([3-9]|\d{2,})/.test(model) && !/lite/.test(model) ? 'low' : undefined;
 }
 
 /** A tiny real request for Test key: proves key, model and request format all work. */
@@ -42,8 +49,10 @@ export interface GeminiOptions {
   apiKey: string;
   /** Blank means DEFAULT_GEMINI_MODEL. A leading "models/" is ignored. */
   model?: string;
+  /** Tried when `model` fails for a reason another model might not have. */
+  backupModel?: string | null;
   fetch?: typeof fetch;
-  /** Limit for generation requests. */
+  /** Limit for one generation request, per model. */
   timeoutMs?: number;
   /** Limit for Test key's reachability check. */
   connectTimeoutMs?: number;
@@ -101,6 +110,9 @@ function seconds(ms: number): string {
   return s < 10 ? String(Math.round(s * 10) / 10) : String(Math.round(s));
 }
 
+/** Failures another model may not have: slow or overloaded, out of its quota, missing, or rejecting the request. */
+const TRY_BACKUP_ON: readonly AiErrorKind[] = ['network', 'quota', 'modelNotFound', 'badResponse'];
+
 let idCounter = 0;
 function defaultNewId(): string {
   idCounter += 1;
@@ -109,7 +121,9 @@ function defaultNewId(): string {
 
 /** Gemini via plain fetch to the REST API. The key travels only in the x-goog-api-key header. */
 export function createGeminiProvider(options: GeminiOptions): AiProvider {
-  const model = resolveModel(options.model);
+  const primary = resolveModel(options.model);
+  const backup = options.backupModel === undefined ? BACKUP_GEMINI_MODEL : options.backupModel;
+  const models = backup && backup !== primary ? [primary, backup] : [primary];
   // Wrapped so the global fetch is always called with the right `this`.
   const fetchFn =
     options.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
@@ -117,8 +131,8 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
   const connectTimeoutMs = options.connectTimeoutMs ?? CONNECT_TIMEOUT_MS;
   const now = options.now ?? Date.now;
   const newId = options.newId ?? defaultNewId;
-  const modelPath = `models/${encodeURIComponent(model)}`;
-  const thinkingLevel = thinkingLevelFor(model);
+  /** The model that worked last; tried first next time. */
+  let preferred = 0;
 
   async function call(path: string, body?: unknown, limitMs = timeoutMs): Promise<unknown> {
     const controller = new AbortController();
@@ -157,10 +171,13 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
     return data;
   }
 
-  async function generateSparks(request: SparkRequest): Promise<Spark[]> {
+  async function generateWith(model: string, request: SparkRequest): Promise<Spark[]> {
     const data = (await call(
-      `${modelPath}:generateContent`,
-      buildGenerateContentBody(request, { thinkingLevel }),
+      `models/${encodeURIComponent(model)}:generateContent`,
+      buildGenerateContentBody(request, {
+        thinkingLevel: thinkingLevelFor(model),
+        maxOutputTokens: MAX_OUTPUT_TOKENS,
+      }),
     )) as GenerateContentResponse | null;
 
     const blockReason = data?.promptFeedback?.blockReason;
@@ -182,18 +199,47 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
     }
 
     const sparks = parseSparks(text, request, newId);
-    if (sparks.length === 0)
+    if (sparks.length === 0) {
       throw new AiError('blocked', undefined, 'No usable sparks in the answer.');
+    }
     return sparks;
   }
 
+  /** Try the preferred model, then the other one; remember which worked. */
+  async function generate(request: SparkRequest): Promise<{ sparks: Spark[]; model: string }> {
+    const order = [...models.slice(preferred), ...models.slice(0, preferred)];
+    const failures: { model: string; error: AiError }[] = [];
+    for (const model of order) {
+      try {
+        const sparks = await generateWith(model, request);
+        preferred = models.indexOf(model);
+        return { sparks, model };
+      } catch (error) {
+        if (!(error instanceof AiError)) throw error;
+        failures.push({ model, error });
+        if (!TRY_BACKUP_ON.includes(error.kind)) break;
+      }
+    }
+    const first = failures[0];
+    if (!first) throw new AiError('badResponse');
+    if (failures.length === 1) throw first.error;
+    const detail = failures
+      .map(({ model, error }) => `${model}: ${error.detail ?? error.message}`)
+      .join(' | ');
+    throw new AiError(first.error.kind, first.error.status, detail);
+  }
+
   return {
-    generateSparks,
-    async testKey(): Promise<void> {
-      // Step 1: can this device reach Google at all? (Model metadata: no generation, no quota.)
+    async generateSparks(request: SparkRequest): Promise<Spark[]> {
+      return (await generate(request)).sparks;
+    },
+
+    async testKey(): Promise<{ model: string }> {
+      // Step 1: can this device reach Google with this key? (A one-entry model list: no
+      // generation, no quota, and independent of which model is chosen.)
       const started = now();
       try {
-        await call(modelPath, undefined, connectTimeoutMs);
+        await call('models?pageSize=1', undefined, connectTimeoutMs);
       } catch (error) {
         if (error instanceof AiError && error.kind === 'network' && error.status === undefined) {
           throw new AiError(
@@ -206,15 +252,15 @@ export function createGeminiProvider(options: GeminiOptions): AiProvider {
       }
       const reachedIn = seconds(now() - started);
 
-      // Step 2: one real spark, since a metadata read passes even when generation fails.
+      // Step 2: one real spark, since a list read passes even when generation fails.
       try {
-        await generateSparks(TEST_REQUEST);
+        return { model: (await generate(TEST_REQUEST)).model };
       } catch (error) {
         if (error instanceof AiError && error.kind === 'network' && error.status === undefined) {
           throw new AiError(
             'network',
             undefined,
-            `Google answered in ${reachedIn} s, but Gemini did not write a test spark (${error.detail ?? 'no answer'}). The model may be busy: try again later, or try another model under Advanced.`,
+            `Google answered in ${reachedIn} s, but no model wrote a test spark in time (${error.detail ?? 'no answer'}). Try again later.`,
           );
         }
         throw error;

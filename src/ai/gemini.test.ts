@@ -1,6 +1,7 @@
 import type { SparkRequest } from '../sparks/types';
 import { strings } from '../strings';
 import {
+  BACKUP_GEMINI_MODEL,
   DEFAULT_GEMINI_MODEL,
   createGeminiProvider,
   errorKindForResponse,
@@ -79,9 +80,19 @@ describe('generateSparks', () => {
     expect(init.method).toBe('POST');
     expect(init.headers).toEqual({ 'x-goog-api-key': KEY, 'content-type': 'application/json' });
     expect(JSON.parse(init.body as string)).toEqual(
-      buildGenerateContentBody(request, { thinkingLevel: 'low' }),
+      buildGenerateContentBody(request, { maxOutputTokens: 2048 }),
     );
-    // Gemini 3.x thinks at "medium" by default; low keeps the first card fast.
+    // The answer is capped, so a runaway answer cannot take minutes.
+    expect(JSON.parse(init.body as string).generationConfig.maxOutputTokens).toBe(2048);
+  });
+
+  it('sends low thinking to a Gemini 3 Flash model', async () => {
+    const { provider, fetch } = setup(
+      answer([{ type: 'hotTake', text: 'Soup is a meal.' }]),
+      'gemini-3.8-flash',
+    );
+    await provider.generateSparks(request);
+    const [, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
     expect(JSON.parse(init.body as string).generationConfig.thinkingConfig).toEqual({
       thinkingLevel: 'low',
     });
@@ -205,7 +216,10 @@ describe('generateSparks', () => {
     });
     const error = await errorOf(provider.generateSparks(request));
     expect(error.kind).toBe('network');
-    expect(error.detail).toBe('No answer within 0 s.');
+    // Both models were tried, and the details say what each did.
+    expect(error.detail).toBe(
+      `${DEFAULT_GEMINI_MODEL}: No answer within 0 s. | ${BACKUP_GEMINI_MODEL}: No answer within 0 s.`,
+    );
   });
 
   it('never puts the key in an error', async () => {
@@ -224,11 +238,9 @@ describe('generateSparks', () => {
 describe('testKey', () => {
   it('first checks Google is reachable, then asks Gemini for one real spark', async () => {
     const { provider, fetch } = setup(answer([{ type: 'hotTake', text: 'Toast is underrated.' }]));
-    await expect(provider.testKey()).resolves.toBeUndefined();
+    await expect(provider.testKey()).resolves.toEqual({ model: DEFAULT_GEMINI_MODEL });
     const [check, generate] = fetch.mock.calls as unknown as [string, RequestInit][];
-    expect(check?.[0]).toBe(
-      `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}`,
-    );
+    expect(check?.[0]).toBe('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1');
     expect(check?.[1].method).toBe('GET');
     expect(generate?.[0]).toBe(
       `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_GEMINI_MODEL}:generateContent`,
@@ -282,7 +294,7 @@ describe('testKey', () => {
     const error = await errorOf(provider.testKey());
     expect(error.kind).toBe('network');
     expect(error.detail).toMatch(
-      /^Google answered in 0\.4 s, but Gemini did not write a test spark \(No answer within 0 s\.\)/,
+      /^Google answered in 0\.4 s, but no model wrote a test spark in time \(gemini-3\.5-flash-lite: No answer within 0 s\. \| gemini-3\.8-flash: No answer within 0 s\.\)/,
     );
   });
 
@@ -321,12 +333,67 @@ describe('testKey', () => {
   });
 });
 
+describe('backup model', () => {
+  function scripted(replies: Record<string, Response>) {
+    return jest.fn(async (url: string) => {
+      const model = /models\/([^:]+):/.exec(url)?.[1] ?? '';
+      const reply = replies[model];
+      if (!reply) throw new Error(`unexpected ${url}`);
+      return reply;
+    });
+  }
+
+  it('tries the backup model when the default is overloaded, and keeps using it', async () => {
+    const fetch = scripted({
+      [DEFAULT_GEMINI_MODEL]: jsonResponse(503, { error: { message: 'The model is overloaded.' } }),
+      [BACKUP_GEMINI_MODEL]: answer([{ type: 'hotTake', text: 'Soup is a meal.' }]),
+    });
+    const provider = createGeminiProvider({
+      apiKey: KEY,
+      fetch: fetch as unknown as typeof globalThis.fetch,
+    });
+    expect(await provider.generateSparks(request)).toHaveLength(1);
+    await provider.generateSparks(request);
+    const models = fetch.mock.calls.map(([url]) => /models\/([^:]+):/.exec(url)?.[1]);
+    // Second request goes straight to the model that worked.
+    expect(models).toEqual([DEFAULT_GEMINI_MODEL, BACKUP_GEMINI_MODEL, BACKUP_GEMINI_MODEL]);
+  });
+
+  it('does not try the backup for a rejected key', async () => {
+    const fetch = scripted({
+      [DEFAULT_GEMINI_MODEL]: jsonResponse(400, {
+        error: { details: [{ reason: 'API_KEY_INVALID' }] },
+      }),
+    });
+    const provider = createGeminiProvider({
+      apiKey: KEY,
+      fetch: fetch as unknown as typeof globalThis.fetch,
+    });
+    expect((await errorOf(provider.generateSparks(request))).kind).toBe('invalidKey');
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('Test key says which model answered', async () => {
+    const fetch = jest.fn(async (url: string) =>
+      url.includes(DEFAULT_GEMINI_MODEL)
+        ? jsonResponse(404, { error: { message: 'Model not found.' } })
+        : answer([{ type: 'hotTake', text: 'Toast is underrated.' }]),
+    );
+    const provider = createGeminiProvider({
+      apiKey: KEY,
+      fetch: fetch as unknown as typeof globalThis.fetch,
+    });
+    await expect(provider.testKey()).resolves.toEqual({ model: BACKUP_GEMINI_MODEL });
+  });
+});
+
 describe('thinkingLevelFor', () => {
   it('asks Gemini 3 and later for low thinking only', () => {
     expect(thinkingLevelFor('gemini-3.8-flash')).toBe('low');
     expect(thinkingLevelFor('gemini-4-argon')).toBe('low');
     expect(thinkingLevelFor('gemini-12-pro')).toBe('low');
     expect(thinkingLevelFor('gemini-2.5-flash')).toBeUndefined();
+    expect(thinkingLevelFor('gemini-3.5-flash-lite')).toBeUndefined();
     expect(thinkingLevelFor('custom-model')).toBeUndefined();
   });
 });

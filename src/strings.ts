@@ -91,14 +91,16 @@ export const strings = {
     storedWeb: 'It is stored in this browser, on this device only.',
     keyStatus: {
       saved: 'Not tested yet. Tap Test key.',
-      testing: 'Testing: asking Gemini for one spark…',
+      testing: 'Testing: asking Gemini for one spark (can take up to a minute)…',
       ok: 'The key works: Gemini wrote a test spark. Sparks now come from Gemini.',
     },
     details: 'Details:',
+    workingModel: 'Model that answered:',
     lastProblem: 'Last problem while drawing sparks:',
     advanced: 'Advanced',
     modelLabel: 'Model id',
-    modelHint: 'Leave blank to use the default.',
+    modelHint:
+      'Leave blank to use the default (fast Flash-Lite). If a model is slow or unavailable, the app tries a backup model by itself.',
     sparksSection: 'Sparks',
     workSafeDefault: 'Work-safe by default',
     workSafeDefaultHint: 'Start with the work-safe toggle on, for team lunches and offsites.',

@@ -54,6 +54,9 @@ export function isAiError(error: unknown): error is AiError {
 export interface AiProvider {
   /** One request for `request.count` sparks. Throws AiError; may return fewer than asked. */
   generateSparks(request: SparkRequest): Promise<Spark[]>;
-  /** Proves the key, model and request format work (one tiny real request). Throws AiError. */
-  testKey(): Promise<void>;
+  /**
+   * Proves the key, model and request format work (one tiny real request) and says which model
+   * answered. Throws AiError.
+   */
+  testKey(): Promise<{ model: string }>;
 }

@@ -26,6 +26,7 @@ export default function Settings() {
   const hasKey = useSettingsStore((s) => s.hasKey);
   const keyStatus = useSettingsStore((s) => s.keyStatus);
   const keyDetail = useSettingsStore((s) => s.keyDetail);
+  const workingModel = useSettingsStore((s) => s.workingModel);
   const lastProblem = useSettingsStore((s) => s.lastProblem);
   const model = useSettingsStore((s) => s.model);
   const saveKey = useSettingsStore((s) => s.saveKey);
@@ -111,6 +112,11 @@ export default function Settings() {
             accessibilityLiveRegion="polite"
           >
             {status}
+          </Text>
+        )}
+        {keyStatus === 'ok' && workingModel && (
+          <Text style={styles.note}>
+            {strings.settings.workingModel} {workingModel}
           </Text>
         )}
         {keyDetail && (
