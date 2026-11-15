@@ -1,0 +1,357 @@
+[
+  {
+    "id": "d01",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Is a hot dog a sandwich?",
+    "options": ["Yes, it counts", "No, it is its own thing"]
+  },
+  {
+    "id": "d02",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Which superpower would be more useful on an ordinary Tuesday?",
+    "options": ["Flying", "Invisibility"]
+  },
+  {
+    "id": "d03",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What makes the perfect free Sunday?",
+    "options": ["Out exploring all day", "Not leaving the house"]
+  },
+  {
+    "id": "d04",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Does pineapple belong on pizza?",
+    "options": ["Absolutely", "Never"]
+  },
+  {
+    "id": "d05",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Who has the better life, early birds or night owls?",
+    "options": ["Early birds", "Night owls"]
+  },
+  {
+    "id": "d06",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Is it better to be a specialist or a generalist?",
+    "options": ["Master one thing", "Be good at many things"]
+  },
+  {
+    "id": "d07",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Should you tell a friend a hard truth they did not ask to hear?",
+    "options": ["Yes, that is what friends are for", "No, wait until they ask"]
+  },
+  {
+    "id": "d08",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Does technology bring people closer together or push them further apart?",
+    "options": ["Closer together", "Further apart"]
+  },
+  {
+    "id": "d09",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Should couples share all their passwords?",
+    "options": ["Yes, nothing to hide", "No, everyone needs some privacy"]
+  },
+  {
+    "id": "d10",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Is reclining your seat on a plane fair game or plain rude?",
+    "options": ["Fair game", "Plain rude"]
+  },
+  {
+    "id": "d11",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Is it ever okay to look through a partner's phone?",
+    "options": ["Yes, if trust is already shaky", "Never, that is a line"]
+  },
+  {
+    "id": "d12",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "On a night out, should the bill be split evenly even if you only had a salad?",
+    "options": ["Split it evenly", "Pay for what you had"]
+  },
+  {
+    "id": "h01",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Breakfast food tastes better at dinner time."
+  },
+  {
+    "id": "h02",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "A good sequel is better than the original."
+  },
+  {
+    "id": "h03",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Cereal is technically a soup."
+  },
+  {
+    "id": "h04",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Board games are more fun than video games."
+  },
+  {
+    "id": "h05",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Cold leftover pizza beats fresh hot pizza."
+  },
+  {
+    "id": "h06",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Most people would be happier with fewer choices."
+  },
+  {
+    "id": "h07",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Being properly bored now and then is good for you."
+  },
+  {
+    "id": "h08",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Nostalgia makes the past look a lot better than it really was."
+  },
+  {
+    "id": "h09",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Staying close friends with an ex is perfectly healthy."
+  },
+  {
+    "id": "h10",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Group chats do more harm than good."
+  },
+  {
+    "id": "h11",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Dating apps have made romance worse."
+  },
+  {
+    "id": "h12",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Tipping culture has gone way too far."
+  },
+  {
+    "id": "m01",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the most chaotic trip anyone here has been on?"
+  },
+  {
+    "id": "m02",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What was the first concert or live show you ever went to?"
+  },
+  {
+    "id": "m03",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the worst haircut anyone here has ever had?"
+  },
+  {
+    "id": "m04",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What toy or game did you love most as a kid?"
+  },
+  {
+    "id": "m05",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the best meal anyone here has ever eaten, and where was it?"
+  },
+  {
+    "id": "m06",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Who was the teacher or mentor who changed something for you?"
+  },
+  {
+    "id": "m07",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What is a moment you were really proud of that nobody else saw?"
+  },
+  {
+    "id": "m08",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What decision seemed small at the time but ended up changing everything?"
+  },
+  {
+    "id": "m09",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "What is the best advice about love anyone here has ever been given?"
+  },
+  {
+    "id": "m10",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "What is the most trouble anyone here ever got into at school?"
+  },
+  {
+    "id": "m11",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "What is the worst date anyone here has ever been on?"
+  },
+  {
+    "id": "m12",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "What is the wildest night out anyone here still talks about?"
+  },
+  {
+    "id": "w01",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather be able to talk to animals or speak every human language?",
+    "options": ["Talk to animals", "Speak every language"]
+  },
+  {
+    "id": "w02",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What if you could live inside any movie for a week?"
+  },
+  {
+    "id": "w03",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather have a rewind button or a pause button for your life?",
+    "options": ["Rewind", "Pause"]
+  },
+  {
+    "id": "w04",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "If every home came with one secret room, what would yours be for?"
+  },
+  {
+    "id": "w05",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather explore the deep ocean or outer space?",
+    "options": ["The deep ocean", "Outer space"]
+  },
+  {
+    "id": "w06",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What if you could ask your future self just one question?"
+  },
+  {
+    "id": "w07",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Would you rather know the whole truth about everything or stay happily unaware?",
+    "options": ["Know everything", "Stay happily unaware"]
+  },
+  {
+    "id": "w08",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What if you could instantly master one skill, but had to give up one you already have?"
+  },
+  {
+    "id": "w09",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Would you rather know the date of your death or how it happens?",
+    "options": ["The date", "How it happens"]
+  },
+  {
+    "id": "w10",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Would you rather everyone could hear your thoughts for a day or read your entire search history?",
+    "options": ["Hear my thoughts", "Read my search history"]
+  },
+  {
+    "id": "w11",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "What if all your exes got together and wrote one joint review of you?"
+  },
+  {
+    "id": "w12",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Would you rather give up coffee or alcohol for the rest of your life?",
+    "options": ["Give up coffee", "Give up alcohol"]
+  }
+]
