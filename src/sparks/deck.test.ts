@@ -27,8 +27,8 @@ function spark(overrides: Partial<Spark>): Spark {
 }
 
 describe('deck.json', () => {
-  it('has at least 40 sparks', () => {
-    expect(rawDeck.length).toBeGreaterThanOrEqual(40);
+  it('has the ~150 sparks the MVP calls for', () => {
+    expect(rawDeck.length).toBeGreaterThanOrEqual(150);
   });
 
   it.each(rawDeck.map((entry) => [entry.id, entry]))('entry %s is valid', (_id, entry) => {
@@ -145,6 +145,18 @@ describe('drawFromDeck', () => {
     const shown = drawMany(allLight, poolSize);
     expect(new Set(shown.map((s) => s.id)).size).toBe(poolSize);
   });
+
+  // SPEC §7: fresh install, no key, 50 taps produce no repeats.
+  it.each([false, true])(
+    'gives 50 taps without a repeat at default settings (work-safe %s)',
+    (workSafe) => {
+      for (let seed = 1; seed <= 10; seed++) {
+        const shown = drawMany({ ...defaultFilters, workSafe }, 50, seededRandom(seed));
+        expect(new Set(shown.map((s) => s.id)).size).toBe(50);
+        expect(new Set(shown.map((s) => normalizeText(s.text))).size).toBe(50);
+      }
+    },
+  );
 
   it('only draws sparks matching the filters', () => {
     const filters: SparkFilters = { types: ['memoryLane'], vibe: 'deep', workSafe: true };
