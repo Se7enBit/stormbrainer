@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,9 +15,9 @@ import { ContextBox } from '../src/ui/ContextBox';
 import { ModeChips } from '../src/ui/ModeChips';
 import { OracleChips } from '../src/ui/OracleChips';
 import { TopicBox } from '../src/ui/TopicBox';
-import { InstallBanner } from '../src/ui/InstallBanner';
+import { InstallPrompt } from '../src/ui/InstallPrompt';
 import { SourceStatus } from '../src/ui/SourceStatus';
-import { SparkButton } from '../src/ui/SparkButton';
+import { SparkButton, sparkButtonSize } from '../src/ui/SparkButton';
 import { SparkCard } from '../src/ui/SparkCard';
 import { colors, spacing } from '../src/ui/theme';
 
@@ -55,6 +55,10 @@ export default function Home() {
   // first tap is already an AI card instead of a deck card while Gemini thinks.
   const install = useInstall();
   const installDismissed = useSettingsStore((s) => s.installDismissed);
+  // × hides the install popup for this visit only; Not now is remembered.
+  const [installClosed, setInstallClosed] = useState(false);
+  // The button fits the space left between the mode chips and the controls.
+  const [buttonSize, setButtonSize] = useState(240);
   const settingsLoaded = useSettingsStore((s) => s.hydrated);
   const dismissInstall = useSettingsStore((s) => s.dismissInstall);
 
@@ -99,17 +103,21 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: true }} />
-      {settingsLoaded && !install.installed && !installDismissed && (
-        <InstallBanner
+      {settingsLoaded && !install.installed && !installDismissed && !installClosed && (
+        <InstallPrompt
           canPrompt={install.canPrompt}
           ios={install.ios}
           onInstall={install.prompt}
-          onDismiss={dismissInstall}
+          onClose={() => setInstallClosed(true)}
+          onNotNow={dismissInstall}
         />
       )}
       <ModeChips mode={mode} onChange={setMode} />
-      <View style={styles.center}>
-        <SparkButton onPress={spark} loading={loading} />
+      <View
+        style={styles.center}
+        onLayout={(e) => setButtonSize(sparkButtonSize(e.nativeEvent.layout))}
+      >
+        <SparkButton onPress={spark} loading={loading} size={buttonSize} />
       </View>
       <View style={styles.controls}>
         {mode === 'brainstorm' && <TopicBox value={topic} onChange={setTopic} />}
@@ -135,8 +143,10 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
+    minHeight: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   controls: {
     paddingHorizontal: spacing.md,
