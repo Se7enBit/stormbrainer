@@ -52,6 +52,13 @@ describe('deck.json', () => {
     }
   });
 
+  it('has Brainstorm creativity prompts for every vibe, work-safe included', () => {
+    for (const vibe of VIBES) {
+      expect(deck.some((s) => s.type === 'idea' && s.vibe === vibe && s.workSafe)).toBe(true);
+    }
+    expect(deck.filter((s) => s.type === 'idea').length).toBeGreaterThanOrEqual(40);
+  });
+
   it('marks every deck spark as coming from the deck', () => {
     expect(deck.every((s) => s.source === 'deck')).toBe(true);
   });

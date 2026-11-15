@@ -85,6 +85,8 @@ function CardDetail({ spark, accent }: { spark: Spark; accent: string }) {
       return <Text style={[styles.hint, { color: accent }]}>{strings.card.hotTakeHint}</Text>;
     case 'memoryLane':
       return <Text style={[styles.hint, { color: accent }]}>{strings.card.memoryLaneHint}</Text>;
+    case 'idea':
+      return <Text style={[styles.hint, { color: accent }]}>{strings.card.ideaHint}</Text>;
   }
 }
 

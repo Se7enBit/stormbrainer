@@ -48,7 +48,7 @@ describe('home screen', () => {
     await fireEvent.press(sparkButton());
     const seen = new Set([currentSpark().id]);
     // Default settings: all types, light vibe.
-    const poolSize = deck.filter((s) => s.vibe === 'light').length;
+    const poolSize = deck.filter((s) => s.vibe === 'light' && s.type !== 'idea').length;
     for (let i = 1; i < poolSize; i++) {
       await fireEvent.press(screen.getByRole('button', { name: strings.card.next }));
       seen.add(currentSpark().id);

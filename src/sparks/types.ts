@@ -1,5 +1,20 @@
-export const SPARK_TYPES = ['debate', 'hotTake', 'memoryLane', 'whatIf'] as const;
+/** Every kind of card. Each belongs to exactly one mode (MODE_TYPES). */
+export const SPARK_TYPES = ['debate', 'hotTake', 'memoryLane', 'whatIf', 'idea'] as const;
 export type SparkType = (typeof SPARK_TYPES)[number];
+
+/** What the big button gives (SPEC §9). */
+export const MODES = ['sparks', 'brainstorm'] as const;
+export type Mode = (typeof MODES)[number];
+
+/** The card types of each mode. Sparks' types are the type chips; other modes have one type. */
+export const MODE_TYPES: Record<Mode, readonly SparkType[]> = {
+  sparks: ['debate', 'hotTake', 'memoryLane', 'whatIf'],
+  brainstorm: ['idea'],
+};
+
+export function modeOf(type: SparkType): Mode {
+  return MODES.find((mode) => MODE_TYPES[mode].includes(type)) ?? 'sparks';
+}
 
 export const VIBES = ['light', 'deep', 'spicy'] as const;
 export type Vibe = (typeof VIBES)[number];
@@ -29,8 +44,11 @@ export interface SparkFilters {
 }
 
 export interface SparkRequest extends SparkFilters {
-  /** One line, at most 100 chars. Used only by AI mode. */
+  mode: Mode;
+  /** Sparks: one line about the group, at most 100 chars. Used only by AI. */
   context?: string;
+  /** Brainstorm: what to brainstorm about, at most 100 chars. Used only by AI. */
+  topic?: string;
   angle: string;
   /** Recently shown texts the model must not repeat. */
   avoid: string[];

@@ -1,4 +1,4 @@
-import { SPARK_TYPES, type Spark, type SparkRequest } from '../sparks/types';
+import { MODE_TYPES, type Spark, type SparkRequest } from '../sparks/types';
 import { parseSparks } from './parse';
 import { buildGenerateContentBody, type ThinkingLevel } from './prompt';
 import { AiError, type AiErrorKind, type AiProvider } from './provider';
@@ -37,7 +37,8 @@ export function thinkingLevelFor(model: string): ThinkingLevel | undefined {
 
 /** A tiny real request for Test key: proves key, model and request format all work. */
 const TEST_REQUEST: SparkRequest = {
-  types: [...SPARK_TYPES],
+  mode: 'sparks',
+  types: [...MODE_TYPES.sparks],
   vibe: 'light',
   workSafe: true,
   angle: 'food and cooking',

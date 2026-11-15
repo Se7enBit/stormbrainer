@@ -12,6 +12,8 @@ import { useSettingsStore } from '../src/store/settingsStore';
 import { useSparkStore } from '../src/store/sparkStore';
 import { ChipsStrip } from '../src/ui/ChipsStrip';
 import { ContextBox } from '../src/ui/ContextBox';
+import { ModeChips } from '../src/ui/ModeChips';
+import { TopicBox } from '../src/ui/TopicBox';
 import { InstallBanner } from '../src/ui/InstallBanner';
 import { SourceStatus } from '../src/ui/SourceStatus';
 import { SparkButton } from '../src/ui/SparkButton';
@@ -30,6 +32,10 @@ export default function Home() {
   const context = useSparkStore((s) => s.context);
   const setContext = useSparkStore((s) => s.setContext);
   const loading = useSparkStore((s) => s.loading);
+  const mode = useSparkStore((s) => s.mode);
+  const setMode = useSparkStore((s) => s.setMode);
+  const topic = useSparkStore((s) => s.topic);
+  const setTopic = useSparkStore((s) => s.setTopic);
   const hasKey = useSettingsStore((s) => s.hasKey);
   const lastProblem = useSettingsStore((s) => s.lastProblem);
   const keyStatus = useSettingsStore((s) => s.keyStatus);
@@ -52,7 +58,7 @@ export default function Home() {
   const showingHome = current === null;
   useEffect(() => {
     if (hasKey && showingHome) prefetch();
-  }, [hasKey, showingHome, filters, context, prefetch]);
+  }, [hasKey, showingHome, mode, filters, context, topic, prefetch]);
 
   // Android back closes the card instead of leaving the app.
   useEffect(() => {
@@ -98,18 +104,21 @@ export default function Home() {
           onDismiss={dismissInstall}
         />
       )}
+      <ModeChips mode={mode} onChange={setMode} />
       <View style={styles.center}>
         <SparkButton onPress={spark} loading={loading} />
       </View>
       <View style={styles.controls}>
+        {mode === 'brainstorm' && <TopicBox value={topic} onChange={setTopic} />}
         <ChipsStrip
           filters={filters}
           onToggleType={toggleType}
           onVibe={setVibe}
           onWorkSafe={setWorkSafe}
+          showTypes={mode === 'sparks'}
         />
-        {hasKey && <ContextBox value={context} onChange={setContext} />}
-        <SourceStatus hasKey={hasKey} problem={problem} />
+        {hasKey && mode === 'sparks' && <ContextBox value={context} onChange={setContext} />}
+        <SourceStatus hasKey={hasKey} problem={problem} mode={mode} />
       </View>
     </SafeAreaView>
   );

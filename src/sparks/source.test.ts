@@ -253,6 +253,39 @@ describe('SparkSource with a key', () => {
   });
 });
 
+describe('Brainstorm in the source', () => {
+  it('sends the mode and topic (not the group context) and keeps queues apart', async () => {
+    const { source, requests } = setup();
+    const brainstorm = {
+      mode: 'brainstorm' as const,
+      filters: { ...defaultFilters, types: ['idea' as const] },
+      context: 'old friends',
+      topic: ' birthday gift for dad ',
+    };
+    const result = await source.next(brainstorm, emptyHistory);
+    expect(result?.spark.type).toBe('idea');
+    expect(requests[0]).toMatchObject({
+      mode: 'brainstorm',
+      types: ['idea'],
+      topic: 'birthday gift for dad',
+    });
+    expect(requests[0]?.context).toBeUndefined();
+    // Switching back to Sparks drops the idea queue and asks again.
+    const spark = await source.next({ filters: defaultFilters }, emptyHistory);
+    expect(spark?.spark.type).not.toBe('idea');
+    expect(requests[1]).toMatchObject({ mode: 'sparks', topic: undefined });
+  });
+
+  it('draws creativity prompts from the deck without a key', async () => {
+    const source = new SparkSource({ deck });
+    const result = await source.next(
+      { mode: 'brainstorm', filters: { ...defaultFilters, types: ['idea'] } },
+      emptyHistory,
+    );
+    expect(result?.spark).toMatchObject({ type: 'idea', source: 'deck' });
+  });
+});
+
 describe('settingsKey', () => {
   it('ignores type order and context whitespace', () => {
     const a = settingsKey({
@@ -266,6 +299,9 @@ describe('settingsKey', () => {
     expect(a).toBe(b);
     expect(settingsKey({ filters: defaultFilters })).not.toBe(
       settingsKey({ filters: { ...defaultFilters, workSafe: true } }),
+    );
+    expect(settingsKey({ mode: 'brainstorm', filters: defaultFilters, topic: 'a' })).not.toBe(
+      settingsKey({ mode: 'brainstorm', filters: defaultFilters, topic: 'b' }),
     );
   });
 });

@@ -1,5 +1,7 @@
-import { allTypesSelected, defaultFilters, toggleType } from './filters';
-import { SPARK_TYPES } from './types';
+import { allTypesSelected, defaultFilters, filtersForMode, toggleType } from './filters';
+import { MODE_TYPES } from './types';
+
+const SPARK_TYPES = MODE_TYPES.sparks;
 
 describe('defaultFilters', () => {
   it('selects all types, light vibe, work-safe off', () => {
@@ -21,5 +23,13 @@ describe('toggleType', () => {
 
   it('goes back to all types instead of none', () => {
     expect(toggleType(['memoryLane'], 'memoryLane')).toEqual([...SPARK_TYPES]);
+  });
+});
+
+describe('filtersForMode', () => {
+  it('keeps the type chips in Sparks and uses ideas in Brainstorm', () => {
+    const filters = { ...defaultFilters, types: ['debate' as const], vibe: 'deep' as const };
+    expect(filtersForMode('sparks', filters)).toBe(filters);
+    expect(filtersForMode('brainstorm', filters)).toEqual({ ...filters, types: ['idea'] });
   });
 });

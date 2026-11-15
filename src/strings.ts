@@ -1,5 +1,5 @@
 import type { AiErrorKind } from './ai/provider';
-import type { SparkType, Vibe } from './sparks/types';
+import type { Mode, SparkType, Vibe } from './sparks/types';
 
 /** All UI text lives here (English only for now; one file so other languages can come later). */
 export const strings = {
@@ -14,12 +14,17 @@ export const strings = {
     controlsLabel: 'Spark settings',
     typesLabel: 'Types',
     vibeLabel: 'Vibe',
+    modesLabel: 'Mode',
+    topicLabel: 'Brainstorm topic',
+    topicPlaceholder: 'What are you brainstorming? e.g. team offsite theme',
+    topicNeedsKey:
+      'Without a Gemini key, Brainstorm gives creativity prompts. Add a key in Settings for ideas about your topic.',
     contextAdd: 'Add group context',
     contextLabel: 'Group context',
     contextPlaceholder: 'e.g. old uni friends at a cabin',
     contextDone: 'Done',
-    sourceAi: 'Sparks come from Gemini.',
-    sourceNoKey: 'Sparks come from the offline deck. Add a Gemini key in Settings for AI sparks.',
+    sourceAi: 'Cards come from Gemini.',
+    sourceNoKey: 'Cards come from the offline deck. Add a Gemini key in Settings for AI cards.',
     sourceProblem: 'Offline deck for now:',
     sourceFix: 'See Settings.',
   },
@@ -28,7 +33,12 @@ export const strings = {
     hotTake: 'Hot take',
     memoryLane: 'Memory lane',
     whatIf: 'What if',
+    idea: 'Idea',
   } satisfies Record<SparkType, string>,
+  modes: {
+    sparks: 'Sparks',
+    brainstorm: 'Brainstorm',
+  } satisfies Record<Mode, string>,
   vibes: {
     light: 'Light',
     deep: 'Deep',
@@ -45,6 +55,7 @@ export const strings = {
     or: 'or',
     hotTakeHint: 'Agree or disagree?',
     memoryLaneHint: 'Who has a story?',
+    ideaHint: 'Yes, and…?',
     save: 'Save spark',
     unsave: 'Remove from saved',
   },
