@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) and 4 (saved + polish) done; milestone 5 is the field test._
+_Last updated: 2026-11-15 — MVP milestones 1–4 done; Modes (SPEC §9): framework + Brainstorm done, Oracle next._
 
 ## What works
 
@@ -11,6 +11,10 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
   - Work-safe toggle.
   - With a key saved: a collapsed **group context** line (≤ 100 chars, AI only).
   - A "check your key in Settings" notice if the key or model was rejected.
+- **Modes (SPEC §9):** mode chips above the Spark button. Each mode has its own offline deck and AI prompt; Saved, history, Vibe and work-safe apply to all.
+  - **Sparks:** the conversation cards below (type chips, group context).
+  - **Brainstorm:** a topic box ("What are you brainstorming?") instead of type chips and context. With a key, each card is one concrete idea about the topic (Light = practical, Deep = thoughtful, Spicy = wild); with no topic, creativity prompts. Without a key, 40 bundled creativity prompts, and the status line says a key adds topic ideas. Cards are type `idea`, pink, with a "Yes, and…?" hint.
+  - **Oracle** (next): Ask (yes/no answers) and Fortune (fortune-cookie lines), tone following the Vibe chips.
 - **Cards (F1):** Spark → a full-screen card. Layout depends on type:
   - Debate: A vs B sides.
   - Hot take: "Agree or disagree?" hint.
@@ -92,7 +96,8 @@ _Last updated: 2026-11-15 — milestones 1 (skeleton), 2 (offline loop), 3 (AI) 
 
 Following SPEC.md §8:
 
-1. **Check on a device:** install the APK and try the key, haptics and keep-awake; paste a real key on the preview.
+1. **Oracle mode** (SPEC §9): Ask · Fortune chips, its own deck and prompt.
+2. **Check on a device:** install the APK and try the key, haptics and keep-awake; paste a real key on the preview.
 2. **Milestone 5 (field test):** use it on a real group night; tune prompts, angles and the deck from what landed.
 3. **Optional:** EAS builds instead of the GitHub-built APK need an Expo account. Run `eas init` once (it adds the project id to `app.json`), then `eas build -p android --profile preview`.
 

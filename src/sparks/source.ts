@@ -9,7 +9,7 @@ import {
 } from '../ai/provider';
 import { drawFromDeck } from './deck';
 import { hasSeen, recordShown, type History } from './history';
-import type { Spark, SparkFilters, SparkRequest } from './types';
+import type { Mode, Spark, SparkFilters, SparkRequest } from './types';
 
 /** Sparks per AI request (SPEC F4): one request, five taps. */
 export const BATCH_SIZE = 5;
@@ -23,9 +23,13 @@ export const QUOTA_COOLDOWN_MS = 60_000;
 export const ERROR_COOLDOWN_MS = 20_000;
 
 export interface SourceSettings {
+  /** Default: sparks. `filters.types` must already be the mode's types (filtersForMode). */
+  mode?: Mode;
   filters: SparkFilters;
-  /** Group context for AI; ignored by the deck. */
+  /** Sparks: group context for AI; ignored by the deck. */
   context?: string;
+  /** Brainstorm: topic for AI; ignored by the deck. */
+  topic?: string;
 }
 
 export interface NextResult {
@@ -46,8 +50,10 @@ interface SourceDeps {
 const NEEDS_USER: readonly AiErrorKind[] = ['invalidKey', 'modelNotFound'];
 
 /** Queue key: the queue is only valid for the settings it was filled with. */
-export function settingsKey({ filters, context }: SourceSettings): string {
+export function settingsKey({ mode = 'sparks', filters, context, topic }: SourceSettings): string {
   return JSON.stringify([
+    mode,
+    cleanContext(topic) ?? '',
     [...filters.types].sort(),
     filters.vibe,
     filters.workSafe,
@@ -179,9 +185,12 @@ export class SparkSource {
     const key = settingsKey(settings);
     if (this.inFlight?.key === key) return this.inFlight.promise;
 
+    const mode = settings.mode ?? 'sparks';
     const request: SparkRequest = {
       ...settings.filters,
-      context: cleanContext(settings.context),
+      mode,
+      context: mode === 'sparks' ? cleanContext(settings.context) : undefined,
+      topic: mode === 'brainstorm' ? cleanContext(settings.topic) : undefined,
       angle: pickAngle(this.random),
       avoid: [...history.recentTexts, ...this.queue.map((s) => s.text)],
       count: BATCH_SIZE,

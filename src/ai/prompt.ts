@@ -1,7 +1,13 @@
 import { RECENT_TEXTS_LIMIT } from '../sparks/history';
-import { MAX_SPARK_TEXT, SPARK_TYPES, type SparkRequest, type Vibe } from '../sparks/types';
+import {
+  MAX_SPARK_TEXT,
+  SPARK_TYPES,
+  type Mode,
+  type SparkRequest,
+  type Vibe,
+} from '../sparks/types';
 
-/** Max length of the optional group context line. */
+/** Max length of the optional group context or brainstorm topic. */
 export const MAX_CONTEXT_LENGTH = 100;
 
 export const SYSTEM_INSTRUCTION = [
@@ -17,10 +23,34 @@ export const SYSTEM_INSTRUCTION = [
   'Return only JSON that matches the response schema.',
 ].join('\n');
 
-const VIBE_GUIDE: Record<Vibe, string> = {
-  light: 'light: playful and easy, anyone can jump in',
-  deep: 'deep: thoughtful, invites real reflection without getting heavy',
-  spicy: 'spicy: bold and provocative enough to start an argument, never offensive',
+/** Brainstorm (SPEC §9): one concrete idea per item, or a creativity prompt without a topic. */
+export const BRAINSTORM_INSTRUCTION = [
+  'You help a person or a group brainstorm. Each item is one idea, read aloud or on a phone card.',
+  `Each idea is one sentence where possible, at most ${MAX_SPARK_TEXT} characters, with no preamble, no emojis and no numbering.`,
+  'With a topic: every idea is concrete and specific to that topic, something you could actually do, make, try or say. Not vague advice, not a list of options in one item.',
+  'Without a topic: write creativity prompts, small imaginative challenges that get people inventing, like "Invent a holiday that celebrates something ordinary".',
+  'Make the ideas in a batch differ from each other: different scales, budgets, audiences and angles.',
+  'Every item has type "idea" and no options.',
+  'Never target, mock or single out an individual. No harassment, hate or sexual content.',
+  'Use the angle as extra inspiration. Never repeat or closely paraphrase anything in the avoid list.',
+  'Return only JSON that matches the response schema.',
+].join('\n');
+
+export function systemInstructionFor(mode: Mode): string {
+  return mode === 'brainstorm' ? BRAINSTORM_INSTRUCTION : SYSTEM_INSTRUCTION;
+}
+
+const VIBE_GUIDE: Record<Mode, Record<Vibe, string>> = {
+  sparks: {
+    light: 'light: playful and easy, anyone can jump in',
+    deep: 'deep: thoughtful, invites real reflection without getting heavy',
+    spicy: 'spicy: bold and provocative enough to start an argument, never offensive',
+  },
+  brainstorm: {
+    light: 'light: practical and easy to try soon',
+    deep: 'deep: thoughtful and meaningful, worth real effort',
+    spicy: 'spicy: bold, wild and unconventional, still possible',
+  },
 };
 
 const WORK_SAFE_ON =
@@ -34,15 +64,26 @@ export function cleanContext(context: string | undefined): string | undefined {
 }
 
 export function buildUserPrompt(request: SparkRequest): string {
-  const lines = [
-    request.count === 1 ? 'Write 1 spark.' : `Write ${request.count} sparks.`,
-    `Types (spread them across these): ${request.types.join(', ')}.`,
-    `Vibe: ${VIBE_GUIDE[request.vibe]}.`,
+  const lines =
+    request.mode === 'brainstorm'
+      ? [request.count === 1 ? 'Write 1 idea.' : `Write ${request.count} ideas.`]
+      : [
+          request.count === 1 ? 'Write 1 spark.' : `Write ${request.count} sparks.`,
+          `Types (spread them across these): ${request.types.join(', ')}.`,
+        ];
+  lines.push(
+    `Vibe: ${VIBE_GUIDE[request.mode][request.vibe]}.`,
     request.workSafe ? WORK_SAFE_ON : WORK_SAFE_OFF,
-  ];
-  const context = cleanContext(request.context);
-  // The context is the host's own description of the group, quoted so it reads as data.
-  if (context) lines.push(`The group: ${JSON.stringify(context)}.`);
+  );
+  if (request.mode === 'brainstorm') {
+    const topic = cleanContext(request.topic);
+    // The user's own words, quoted so they read as data.
+    lines.push(topic ? `Topic: ${JSON.stringify(topic)}.` : 'No topic: write creativity prompts.');
+  } else {
+    const context = cleanContext(request.context);
+    // The context is the host's own description of the group, quoted so it reads as data.
+    if (context) lines.push(`The group: ${JSON.stringify(context)}.`);
+  }
   lines.push(`Angle: ${request.angle}.`);
   const avoid = request.avoid.slice(0, RECENT_TEXTS_LIMIT);
   if (avoid.length > 0) {
@@ -80,7 +121,7 @@ export function buildGenerateContentBody(
   options: { thinkingLevel?: ThinkingLevel; maxOutputTokens?: number } = {},
 ) {
   return {
-    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+    systemInstruction: { parts: [{ text: systemInstructionFor(request.mode) }] },
     contents: [{ role: 'user', parts: [{ text: buildUserPrompt(request) }] }],
     generationConfig: {
       responseMimeType: 'application/json',

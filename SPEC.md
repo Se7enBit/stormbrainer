@@ -174,3 +174,18 @@ Honest expectation: conversation-card apps are a crowded, low-price category. Th
 3. **AI** — key settings + test, Gemini provider, prompt/parse with tests, batching queue, fallback.
 4. **Saved + polish** — saved list, haptics, keep-awake, empty/error states, preview APK via EAS.
 5. **Field test** — use it on a real group night; tune prompts, angles and deck from what actually landed.
+6. **Modes** (§9) — mode chips + Brainstorm; then Oracle.
+
+## 9. Modes (post-MVP, agreed 2026-11-15)
+
+The app keeps one big button and one card, but a **mode** decides what kind of card it gives. Modes are picked with a row of **mode chips above the Spark button** (single choice; Sparks is the default). Every mode has its **own offline deck** (bundled, works without a key) **and its own AI prompt** (same Gemini provider, batching, queue and fallback as F4). Saved, history/dedupe, work-safe and the Vibe chips apply to every mode.
+
+| Mode | Card | Mode-specific controls | Vibe chips mean |
+|---|---|---|---|
+| **Sparks** (MVP) | Conversation spark: debate, hot take, memory lane, what if | Type chips, group context | Light / Deep / Spicy as in F2 |
+| **Brainstorm** | One **concrete idea** about the topic; with no topic, a creativity prompt | **Topic** box ("What are you brainstorming?", ≤ 100 chars) instead of the context box; no type chips | Light = practical, Deep = thoughtful, Spicy = bold and wild |
+| **Oracle** (next) | **Ask**: an answer to a yes/no question the group asks out loud. **Fortune**: a fortune-cookie line | Two chips inside the mode: Ask · Fortune | Light = playful, Deep = mystical, Spicy = cheeky |
+
+- Brainstorm cards have type `idea` (no options). Without a key, Brainstorm draws from its deck of creativity prompts, and the status line says a key is needed for ideas about the topic.
+- Oracle is an original "fortune" mode: its own name and its own answers, not a copy of any toy's answer set.
+- Still out of scope: scores, turns and timers (§3); a mode that needs them waits for a SPEC change.

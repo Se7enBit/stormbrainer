@@ -1,14 +1,18 @@
 import { create } from 'zustand';
 
 import type { AiProblem } from '../ai/provider';
-import { defaultFilters, toggleType } from '../sparks/filters';
+import { defaultFilters, filtersForMode, toggleType } from '../sparks/filters';
 import { emptyHistory, recordShown, type History } from '../sparks/history';
-import type { Spark, SparkFilters, SparkType, Vibe } from '../sparks/types';
+import type { Mode, Spark, SparkFilters, SparkType, Vibe } from '../sparks/types';
 import { sparkSource } from './ai';
 import { useSettingsStore } from './settingsStore';
 
 interface SparkState {
+  /** What the big button gives (SPEC §9). */
+  mode: Mode;
   filters: SparkFilters;
+  /** Brainstorm topic for AI ideas. */
+  topic: string;
   /** One-line group context for AI sparks. */
   context: string;
   /** The card on screen, or null for the home screen. */
@@ -34,6 +38,8 @@ interface SparkState {
   setVibe: (vibe: Vibe) => void;
   setWorkSafe: (workSafe: boolean) => void;
   setContext: (context: string) => void;
+  setMode: (mode: Mode) => void;
+  setTopic: (topic: string) => void;
 }
 
 export const useSparkStore = create<SparkState>()((set, get) => {
@@ -43,8 +49,9 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     if (busy) return;
     busy = true;
     try {
-      const { filters, context, history, current } = get();
-      const result = await sparkSource.next({ filters, context }, history, current, () =>
+      const { mode, filters, context, topic, history, current } = get();
+      const settings = { mode, filters: filtersForMode(mode, filters), context, topic };
+      const result = await sparkSource.next(settings, history, current, () =>
         set({ loading: true }),
       );
       const aiProblem = result?.aiProblem ?? null;
@@ -61,7 +68,9 @@ export const useSparkStore = create<SparkState>()((set, get) => {
   };
 
   return {
+    mode: 'sparks',
     filters: defaultFilters,
+    topic: '',
     context: '',
     current: null,
     history: emptyHistory,
@@ -69,8 +78,11 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     aiProblem: null,
     next: draw,
     prefetch: () => {
-      const { filters, context, history } = get();
-      sparkSource.prefetch({ filters, context }, history);
+      const { mode, filters, context, topic, history } = get();
+      sparkSource.prefetch(
+        { mode, filters: filtersForMode(mode, filters), context, topic },
+        history,
+      );
     },
     reroll: draw,
     close: () => set({ current: null }),
@@ -82,5 +94,7 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     setVibe: (vibe) => set(({ filters }) => ({ filters: { ...filters, vibe } })),
     setWorkSafe: (workSafe) => set(({ filters }) => ({ filters: { ...filters, workSafe } })),
     setContext: (context) => set({ context }),
+    setMode: (mode) => set({ mode }),
+    setTopic: (topic) => set({ topic }),
   };
 });

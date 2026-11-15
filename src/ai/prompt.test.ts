@@ -1,14 +1,17 @@
-import { SPARK_TYPES, type SparkRequest } from '../sparks/types';
+import { MODE_TYPES, SPARK_TYPES, type SparkRequest } from '../sparks/types';
 import {
+  BRAINSTORM_INSTRUCTION,
   MAX_CONTEXT_LENGTH,
   RESPONSE_SCHEMA,
   SYSTEM_INSTRUCTION,
   buildGenerateContentBody,
   buildUserPrompt,
   cleanContext,
+  systemInstructionFor,
 } from './prompt';
 
 const request: SparkRequest = {
+  mode: 'sparks',
   types: ['debate', 'memoryLane'],
   vibe: 'spicy',
   workSafe: false,
@@ -24,7 +27,7 @@ describe('SYSTEM_INSTRUCTION', () => {
     expect(SYSTEM_INSTRUCTION).toMatch(/no emojis/i);
     expect(SYSTEM_INSTRUCTION).toMatch(/Never invent shared history/);
     expect(SYSTEM_INSTRUCTION).toMatch(/Never target, mock or single out an individual/);
-    for (const type of SPARK_TYPES) expect(SYSTEM_INSTRUCTION).toContain(`- ${type}:`);
+    for (const type of MODE_TYPES.sparks) expect(SYSTEM_INSTRUCTION).toContain(`- ${type}:`);
   });
 });
 
@@ -87,5 +90,38 @@ describe('buildGenerateContentBody', () => {
     expect(body.generationConfig.responseMimeType).toBe('application/json');
     expect(body.generationConfig.responseSchema).toBe(RESPONSE_SCHEMA);
     expect(RESPONSE_SCHEMA.properties.sparks.items.properties.type.enum).toEqual(SPARK_TYPES);
+  });
+});
+
+describe('Brainstorm prompt', () => {
+  const brainstorm: SparkRequest = {
+    mode: 'brainstorm',
+    types: ['idea'],
+    vibe: 'spicy',
+    workSafe: true,
+    angle: 'food and cooking',
+    avoid: [],
+    count: 5,
+  };
+
+  it('uses the brainstorm instruction and asks for ideas about the quoted topic', () => {
+    const body = buildGenerateContentBody({ ...brainstorm, topic: ' team  offsite theme ' });
+    expect(body.systemInstruction.parts[0]?.text).toBe(BRAINSTORM_INSTRUCTION);
+    const prompt = body.contents[0]?.parts[0]?.text ?? '';
+    expect(prompt).toContain('Write 5 ideas.');
+    expect(prompt).toContain('Topic: "team offsite theme".');
+    expect(prompt).toContain('bold, wild and unconventional');
+    expect(prompt).toContain('Work-safe is ON');
+    expect(prompt).not.toContain('Types (spread');
+  });
+
+  it('asks for creativity prompts without a topic', () => {
+    expect(buildUserPrompt(brainstorm)).toContain('No topic: write creativity prompts.');
+    expect(BRAINSTORM_INSTRUCTION).toMatch(/concrete and specific to that topic/);
+    expect(BRAINSTORM_INSTRUCTION).toMatch(/type "idea"/);
+  });
+
+  it('keeps Sparks on its own instruction', () => {
+    expect(systemInstructionFor('sparks')).toBe(SYSTEM_INSTRUCTION);
   });
 });

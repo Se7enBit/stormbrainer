@@ -1121,5 +1121,285 @@
     "workSafe": true,
     "text": "Would you rather give up social media or takeaway food for a year?",
     "options": ["Social media", "Takeaway food"]
+  },
+  {
+    "id": "i01",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Invent a new holiday that celebrates something completely ordinary. What are its traditions?"
+  },
+  {
+    "id": "i02",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Design a kitchen gadget nobody asked for but everyone secretly wants."
+  },
+  {
+    "id": "i03",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Rename every day of the week. What are the new names and why?"
+  },
+  {
+    "id": "i04",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Invent a sport that can be played in a small living room."
+  },
+  {
+    "id": "i05",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Pitch a theme park ride based on an everyday chore."
+  },
+  {
+    "id": "i06",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Invent a board game that takes exactly five minutes to play."
+  },
+  {
+    "id": "i07",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Create a new ice cream flavour inspired by your hometown."
+  },
+  {
+    "id": "i08",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Combine two objects in this room into one useful product."
+  },
+  {
+    "id": "i09",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Invent a polite way to end a meeting that runs too long."
+  },
+  {
+    "id": "i10",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Design a uniform for a job that does not need one."
+  },
+  {
+    "id": "i11",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Think of three new uses for an umbrella that have nothing to do with rain."
+  },
+  {
+    "id": "i12",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Create a mascot for something that has none, like Tuesdays or traffic lights."
+  },
+  {
+    "id": "i13",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Invent a game you could play with only a spoon and a coin."
+  },
+  {
+    "id": "i14",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Plan a picnic where every dish is a single colour."
+  },
+  {
+    "id": "i15",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Design the cover of a book about a cat who becomes mayor."
+  },
+  {
+    "id": "i16",
+    "type": "idea",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Invent a new rule for your favourite sport that would make it more fun to watch."
+  },
+  {
+    "id": "i17",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Design a small daily ritual that would make your neighbourhood friendlier."
+  },
+  {
+    "id": "i18",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Invent a school subject that should exist but does not. What would it teach?"
+  },
+  {
+    "id": "i19",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "How could a city make waiting at bus stops actually enjoyable?"
+  },
+  {
+    "id": "i20",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Invent a tradition that helps old friends stay in touch."
+  },
+  {
+    "id": "i21",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Design a museum exhibit about everyday life in this decade."
+  },
+  {
+    "id": "i22",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What could replace the business card in ten years?"
+  },
+  {
+    "id": "i23",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Create a way for strangers on a train to share one good recommendation."
+  },
+  {
+    "id": "i24",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Design a library that lends something other than books."
+  },
+  {
+    "id": "i25",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Invent a way to make household chores feel like a team game."
+  },
+  {
+    "id": "i26",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Design a hotel made just for night owls."
+  },
+  {
+    "id": "i27",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Design a dating app feature that would help people actually connect."
+  },
+  {
+    "id": "i28",
+    "type": "idea",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Invent a kind ritual for getting over a breakup."
+  },
+  {
+    "id": "i29",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Pitch the most ridiculous startup idea that could secretly work."
+  },
+  {
+    "id": "i30",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Redesign the office chair so nobody can fall asleep in meetings."
+  },
+  {
+    "id": "i31",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Invent a reality TV show that would be oddly wholesome."
+  },
+  {
+    "id": "i32",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Design a vending machine that sells something it absolutely should not."
+  },
+  {
+    "id": "i33",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Create a festival where the main event is doing absolutely nothing."
+  },
+  {
+    "id": "i34",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Invent a new Olympic sport based on office life."
+  },
+  {
+    "id": "i35",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Design a restaurant where the waiter is also the menu."
+  },
+  {
+    "id": "i36",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Invent a gadget that makes every phone call twice as dramatic."
+  },
+  {
+    "id": "i37",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Name and describe a cocktail inspired by an awkward family dinner."
+  },
+  {
+    "id": "i38",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Design a dating show where the contestants' parents do all the choosing."
+  },
+  {
+    "id": "i39",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Invent a party game that gets everyone a little too competitive after a few drinks."
+  },
+  {
+    "id": "i40",
+    "type": "idea",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Plan the most chaotic hen or stag party theme that is still legal."
   }
 ]

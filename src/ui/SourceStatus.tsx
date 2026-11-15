@@ -2,20 +2,22 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text } from 'react-native';
 
 import type { AiProblem } from '../ai/provider';
+import type { Mode } from '../sparks/types';
 import { strings } from '../strings';
 import { colors } from './theme';
 
 interface Props {
   hasKey: boolean;
   problem: AiProblem | null;
+  mode?: Mode;
 }
 
 /** One line under the controls saying where sparks come from right now, and why. */
-export function SourceStatus({ hasKey, problem }: Props) {
+export function SourceStatus({ hasKey, problem, mode = 'sparks' }: Props) {
   if (!hasKey) {
     return (
       <Link href="/settings" style={styles.text}>
-        {strings.home.sourceNoKey}
+        {mode === 'brainstorm' ? strings.home.topicNeedsKey : strings.home.sourceNoKey}
       </Link>
     );
   }

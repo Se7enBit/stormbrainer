@@ -17,6 +17,7 @@ import { AI_ERROR_KINDS, AiError, type AiErrorKind } from './provider';
 const KEY = 'test-key-AIza-not-real';
 
 const request: SparkRequest = {
+  mode: 'sparks',
   types: ['hotTake', 'debate'],
   vibe: 'light',
   workSafe: false,
