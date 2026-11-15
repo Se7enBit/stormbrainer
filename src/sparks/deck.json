@@ -96,6 +96,214 @@
     "options": ["Split it evenly", "Pay for what you had"]
   },
   {
+    "id": "d13",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Should you read the book before watching the movie?",
+    "options": ["Book first", "Movie first"]
+  },
+  {
+    "id": "d14",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Which makes the better holiday, the beach or the mountains?",
+    "options": ["The beach", "The mountains"]
+  },
+  {
+    "id": "d15",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Should breakfast be sweet or savoury?",
+    "options": ["Sweet", "Savoury"]
+  },
+  {
+    "id": "d16",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Is it better to plan every detail of a trip or just wing it?",
+    "options": ["Plan everything", "Wing it"]
+  },
+  {
+    "id": "d17",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Which season wins, summer or winter?",
+    "options": ["Summer", "Winter"]
+  },
+  {
+    "id": "d18",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Who makes the better companion, a cat or a dog?",
+    "options": ["A cat", "A dog"]
+  },
+  {
+    "id": "d19",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Is it ever acceptable to wear socks with sandals?",
+    "options": ["Totally fine", "Never acceptable"]
+  },
+  {
+    "id": "d20",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Should you make your bed every single morning?",
+    "options": ["Every morning", "What is the point"]
+  },
+  {
+    "id": "d21",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Is it better to arrive early or exactly on time?",
+    "options": ["Early", "Exactly on time"]
+  },
+  {
+    "id": "d22",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Should you binge a whole series at once or watch one episode a week?",
+    "options": ["Binge it all", "One a week"]
+  },
+  {
+    "id": "d23",
+    "type": "debate",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "In the kitchen, is a tomato a fruit or a vegetable?",
+    "options": ["A fruit", "A vegetable"]
+  },
+  {
+    "id": "d24",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Is it better to be respected or to be liked?",
+    "options": ["Respected", "Liked"]
+  },
+  {
+    "id": "d25",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Should you follow your passion or follow the opportunities?",
+    "options": ["Follow your passion", "Follow the opportunities"]
+  },
+  {
+    "id": "d26",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Is it better to stay in one place your whole life or keep moving around?",
+    "options": ["Put down roots", "Keep moving"]
+  },
+  {
+    "id": "d27",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Are people shaped more by their nature or by how they were raised?",
+    "options": ["Nature", "Upbringing"]
+  },
+  {
+    "id": "d28",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Would the world be better off if nobody could ever lie?",
+    "options": ["Better off", "Worse off"]
+  },
+  {
+    "id": "d29",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Is it better to have a perfect memory or to be able to forget on purpose?",
+    "options": ["Perfect memory", "Forget on purpose"]
+  },
+  {
+    "id": "d30",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Should you stay with someone just because it is comfortable?",
+    "options": ["Comfort counts for a lot", "No, that is settling"]
+  },
+  {
+    "id": "d31",
+    "type": "debate",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Is it better to marry young or to wait until later?",
+    "options": ["Marry young", "Wait"]
+  },
+  {
+    "id": "d32",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Is it rude to leave a party without saying goodbye?",
+    "options": ["Rude", "Totally fine"]
+  },
+  {
+    "id": "d33",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Is it ever okay to eat someone else's food from the shared fridge?",
+    "options": ["Never", "If it has been there a week"]
+  },
+  {
+    "id": "d34",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Are open-plan offices a good idea or a disaster?",
+    "options": ["A good idea", "A disaster"]
+  },
+  {
+    "id": "d35",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Is it okay to lie about your age on a dating profile?",
+    "options": ["A little is fine", "Never"]
+  },
+  {
+    "id": "d36",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Should you tell a friend if you spot their partner on a dating app?",
+    "options": ["Tell them", "Stay out of it"]
+  },
+  {
+    "id": "d37",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Is it okay to regift a present you did not like?",
+    "options": ["Perfectly fine", "Never"]
+  },
+  {
+    "id": "d38",
+    "type": "debate",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Is a bottle of wine on a weeknight a treat or a bad habit?",
+    "options": ["A treat", "A bad habit"]
+  },
+  {
     "id": "h01",
     "type": "hotTake",
     "vibe": "light",
@@ -180,6 +388,188 @@
     "text": "Tipping culture has gone way too far."
   },
   {
+    "id": "h13",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Socks are a genuinely great present."
+  },
+  {
+    "id": "h14",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "The best part of any trip is coming home."
+  },
+  {
+    "id": "h15",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Pancakes are better than waffles."
+  },
+  {
+    "id": "h16",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Rainy days are better than sunny days."
+  },
+  {
+    "id": "h17",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Bananas are the most overrated fruit."
+  },
+  {
+    "id": "h18",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Almost every film these days is too long."
+  },
+  {
+    "id": "h19",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Ketchup belongs in the fridge."
+  },
+  {
+    "id": "h20",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Karaoke is more fun when you sing badly."
+  },
+  {
+    "id": "h21",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Popcorn is the only acceptable cinema snack."
+  },
+  {
+    "id": "h22",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Mondays are not nearly as bad as people say."
+  },
+  {
+    "id": "h23",
+    "type": "hotTake",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Snacks taste better straight from the bag than from a bowl."
+  },
+  {
+    "id": "h24",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Everyone should live alone at least once."
+  },
+  {
+    "id": "h25",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Most advice is people talking to their younger selves."
+  },
+  {
+    "id": "h26",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Social media has made people less happy overall."
+  },
+  {
+    "id": "h27",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Ambition is overrated."
+  },
+  {
+    "id": "h28",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Kids today have it better than any generation before them."
+  },
+  {
+    "id": "h29",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "You learn more about people from their questions than from their answers."
+  },
+  {
+    "id": "h30",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Arguing now and then is a sign of a healthy relationship."
+  },
+  {
+    "id": "h31",
+    "type": "hotTake",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Money can buy happiness, at least a little."
+  },
+  {
+    "id": "h32",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Voice messages should be banned."
+  },
+  {
+    "id": "h33",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "No meeting should ever be longer than fifteen minutes."
+  },
+  {
+    "id": "h34",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Reply all should be removed from every email app."
+  },
+  {
+    "id": "h35",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Weddings have become too expensive to be fun."
+  },
+  {
+    "id": "h36",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Hangovers get worse every single year after twenty-five."
+  },
+  {
+    "id": "h37",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Splitting the rent equally is unfair if one room is bigger."
+  },
+  {
+    "id": "h38",
+    "type": "hotTake",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Couples should not post about each other online."
+  },
+  {
     "id": "m01",
     "type": "memoryLane",
     "vibe": "light",
@@ -262,6 +652,188 @@
     "vibe": "spicy",
     "workSafe": false,
     "text": "What is the wildest night out anyone here still talks about?"
+  },
+  {
+    "id": "m13",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the best present anyone here has ever received?"
+  },
+  {
+    "id": "m14",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What was your favourite cartoon or TV show growing up?"
+  },
+  {
+    "id": "m15",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the strangest job anyone here has ever had?"
+  },
+  {
+    "id": "m16",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Who here has the best story about getting completely lost?"
+  },
+  {
+    "id": "m17",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What was the first thing you ever bought with your own money?"
+  },
+  {
+    "id": "m18",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the funniest thing that ever happened to anyone here on public transport?"
+  },
+  {
+    "id": "m19",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What was the most memorable birthday anyone here has had?"
+  },
+  {
+    "id": "m20",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Which song instantly takes you back to being a teenager?"
+  },
+  {
+    "id": "m21",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What was the best school trip anyone here went on?"
+  },
+  {
+    "id": "m22",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What is the most impressive thing anyone here has ever won?"
+  },
+  {
+    "id": "m23",
+    "type": "memoryLane",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What was the first pet anyone here had, and what was its name?"
+  },
+  {
+    "id": "m24",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What is something you learned the hard way?"
+  },
+  {
+    "id": "m25",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "When did you last genuinely surprise yourself?"
+  },
+  {
+    "id": "m26",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What small kindness from a stranger do you still remember?"
+  },
+  {
+    "id": "m27",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What place from your childhood would you love to visit again?"
+  },
+  {
+    "id": "m28",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What is a risk you took that really paid off?"
+  },
+  {
+    "id": "m29",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "What is a family tradition you would love to keep going?"
+  },
+  {
+    "id": "m30",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "How did anyone here meet their best friend or their partner?"
+  },
+  {
+    "id": "m31",
+    "type": "memoryLane",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "What is the hardest goodbye anyone here has had to say?"
+  },
+  {
+    "id": "m32",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "What is the most embarrassing thing anyone here has done in front of a crowd?"
+  },
+  {
+    "id": "m33",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "What is the worst gift anyone here has had to pretend to love?"
+  },
+  {
+    "id": "m34",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "What is the most ridiculous excuse anyone here has used to get out of something?"
+  },
+  {
+    "id": "m35",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Who here has a story about a crush they never told anyone about?"
+  },
+  {
+    "id": "m36",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "What is the worst hangover story anyone here is willing to share?"
+  },
+  {
+    "id": "m37",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "What is the most rebellious thing anyone here did as a teenager?"
+  },
+  {
+    "id": "m38",
+    "type": "memoryLane",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "What is the cheekiest thing anyone here has done to get out of work?"
   },
   {
     "id": "w01",
@@ -353,5 +925,201 @@
     "workSafe": false,
     "text": "Would you rather give up coffee or alcohol for the rest of your life?",
     "options": ["Give up coffee", "Give up alcohol"]
+  },
+  {
+    "id": "w13",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather be able to fly or breathe underwater?",
+    "options": ["Fly", "Breathe underwater"]
+  },
+  {
+    "id": "w14",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "What if you could only eat one cuisine for the rest of your life?"
+  },
+  {
+    "id": "w15",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather live in a treehouse or on a houseboat?",
+    "options": ["A treehouse", "A houseboat"]
+  },
+  {
+    "id": "w16",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "If animals could talk, which one would be the rudest?"
+  },
+  {
+    "id": "w17",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather always be ten minutes early or twenty minutes late?",
+    "options": ["Ten minutes early", "Twenty minutes late"]
+  },
+  {
+    "id": "w18",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "If you could add one new holiday to the calendar, what would it celebrate?"
+  },
+  {
+    "id": "w19",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather have a personal chef or a personal driver?",
+    "options": ["A personal chef", "A personal driver"]
+  },
+  {
+    "id": "w20",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "If you woke up tomorrow as a famous musician, what would your first song be about?"
+  },
+  {
+    "id": "w21",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather visit the past or the future?",
+    "options": ["The past", "The future"]
+  },
+  {
+    "id": "w22",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "If you could own any gadget from a film or book, which would you pick?"
+  },
+  {
+    "id": "w23",
+    "type": "whatIf",
+    "vibe": "light",
+    "workSafe": true,
+    "text": "Would you rather never have to sleep or never have to eat?",
+    "options": ["Never sleep", "Never eat"]
+  },
+  {
+    "id": "w24",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "If you could relive one day of your life, which would it be?"
+  },
+  {
+    "id": "w25",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Would you rather be famous for something silly or unknown for something great?",
+    "options": ["Famous for something silly", "Unknown for something great"]
+  },
+  {
+    "id": "w26",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "If you knew you could not fail, what would you try first?"
+  },
+  {
+    "id": "w27",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "Would you rather have more time or more energy?",
+    "options": ["More time", "More energy"]
+  },
+  {
+    "id": "w28",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "If you could send one message to everyone in the world, what would it say?"
+  },
+  {
+    "id": "w29",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": true,
+    "text": "If you had to start over somewhere new tomorrow, where would you go?"
+  },
+  {
+    "id": "w30",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "Would you rather read your partner's mind for a day or have them read yours?",
+    "options": ["Read theirs", "They read mine"]
+  },
+  {
+    "id": "w31",
+    "type": "whatIf",
+    "vibe": "deep",
+    "workSafe": false,
+    "text": "If you could live forever in perfect health, would you want to?"
+  },
+  {
+    "id": "w32",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Would you rather your boss saw your camera roll or your group chats?",
+    "options": ["My camera roll", "My group chats"]
+  },
+  {
+    "id": "w33",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Would you rather have to say everything you think or never share an opinion again?",
+    "options": ["Say everything", "Never share an opinion"]
+  },
+  {
+    "id": "w34",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "If everyone wore a sign showing their most annoying habit, what would yours say?"
+  },
+  {
+    "id": "w35",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Would you rather lose your phone for a week or your voice for a week?",
+    "options": ["My phone", "My voice"]
+  },
+  {
+    "id": "w36",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "If you could secretly read one celebrity's messages, whose would you pick?"
+  },
+  {
+    "id": "w37",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": false,
+    "text": "Would you rather date someone who never stops talking or someone who never says a word?",
+    "options": ["Never stops talking", "Never says a word"]
+  },
+  {
+    "id": "w38",
+    "type": "whatIf",
+    "vibe": "spicy",
+    "workSafe": true,
+    "text": "Would you rather give up social media or takeaway food for a year?",
+    "options": ["Social media", "Takeaway food"]
   }
 ]

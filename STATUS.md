@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-11-15 — walking skeleton (milestone 1, plus the offline core of milestone 2)._
+_Last updated: 2026-11-15 — milestones 1 (skeleton) and 2 (offline loop) done._
 
 ## What works
 
@@ -19,10 +19,10 @@ _Last updated: 2026-11-15 — walking skeleton (milestone 1, plus the offline co
   - Android back closes the card.
 - **No repeats:** sparks are drawn without replacement and deduped by id and by normalized text (FNV-1a hash). The pool reshuffles only once every matching spark has been shown, and never repeats the card that was just on screen.
 - **Filtering:** chips filter the deck. Work-safe ON never yields a `workSafe: false` spark. If a vibe has nothing for the chosen types, only the vibe is relaxed (never the types or work-safe); in practice that cannot happen yet, because every type × vibe has a work-safe spark.
-- **Deck:** `src/sparks/deck.json`, 48 hand-written sparks (12 per type, every type × vibe has at least one work-safe spark). Each entry is validated in tests: shape, ≤ 160 chars, no emojis, no numbering, options where required, unique ids and texts.
+- **Deck:** `src/sparks/deck.json`, 152 hand-written sparks: 38 per type, 64 Light (all work-safe), 48 Deep, 40 Spicy, every type × vibe has work-safe sparks. Default settings give a 64-spark pool, so the SPEC's "50 taps produce no repeats" holds (tested, with work-safe on and off). Each entry is validated in tests: shape, ≤ 160 chars, no emojis, no numbering, options where required, unique ids and texts.
 - **Card text size:** grows smaller as the text gets longer, never below 28. The text wraps and scrolls; it is never truncated.
 - **Settings** shows `Version 0.1.0 · <commit>`, so you can see which build the preview is running. **Saved** and the rest of **Settings** are placeholders.
-- **Tests:** 86 passing. They cover:
+- **Tests:** 192 passing (each deck entry is its own validation test). They cover:
   - deck validation, filtering, draw/dedupe and history;
   - chip toggling and font sizing;
   - SparkCard layouts per type and its actions;
@@ -41,16 +41,13 @@ _Last updated: 2026-11-15 — walking skeleton (milestone 1, plus the offline co
 
 Following SPEC.md §8:
 
-1. **Finish milestone 2 (offline loop):**
-   - Grow the deck towards ~150. It needs at least 50 Light sparks for the "50 taps, no repeats" criterion at default settings; there are 20 today.
-   - Persist chips and history across reloads (AsyncStorage).
-2. **Milestone 3 (AI):**
+1. **Milestone 3 (AI):**
    - Settings: API key paste / test / remove (`expo-secure-store` on native, `localStorage` on web with the on-device note).
    - The AI layer under `src/ai/`: `provider.ts` (`AiProvider` interface), `gemini.ts` (plain `fetch`, `responseSchema`, single model constant), `prompt.ts`, `parse.ts`, `angles.ts`.
    - A queue of 5 refilled at ≤ 1, invalidated when chips or the context change.
    - `src/sparks/source.ts` orchestrator with error mapping and silent fallback to the deck.
    - The context box (AI-only).
-3. **Milestone 4 (saved + polish):**
+2. **Milestone 4 (saved + polish):**
    - ☆ Save on the card and the Saved list (persisted, delete by swipe or long-press).
    - Haptics on Spark (`expo-haptics`) and keep-awake while a card shows (`expo-keep-awake`).
    - Settings: work-safe default, Clear history, About/privacy note.
@@ -60,8 +57,7 @@ Following SPEC.md §8:
 ## Known issues / limitations
 
 - **Deploys only from `main`.** Pushes to this branch run the checks but do not deploy. I couldn't check from here whether Pages is enabled for this repo; if `configure-pages` fails on `main`, step 2 above is the fix.
-- **Small deck.** At default settings (all types, Light) the pool is 20 sparks, so a cycle repeats after 20 taps.
-- **Nothing is persisted yet.** Chips and history reset on reload or restart.
+- **Nothing is persisted yet.** Chips reset on reload. History is per session by design (SPEC F3: shuffled per session); the work-safe default arrives with Settings in milestone 4.
 - **Reroll behaves exactly like Next** with the offline deck. The difference is meant for the AI queue in milestone 3.
 - **No Save, haptics or keep-awake yet** (all milestone 4).
 - **Browser back on the web** while a card is showing leaves the page instead of closing the card. The card is screen state, not a route. Android hardware back is handled.
