@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import type { AiErrorKind } from '../ai/provider';
 import { defaultFilters, toggleType } from '../sparks/filters';
-import { emptyHistory, type History } from '../sparks/history';
+import { emptyHistory, recordShown, type History } from '../sparks/history';
 import type { Spark, SparkFilters, SparkType, Vibe } from '../sparks/types';
 import { sparkSource } from './ai';
 import { useSettingsStore } from './settingsStore';
@@ -24,6 +24,10 @@ interface SparkState {
   reroll: () => Promise<void>;
   /** Back to the home screen. */
   close: () => void;
+  /** Show a specific spark (e.g. one from Saved). */
+  show: (spark: Spark) => void;
+  /** Forget what was shown, so every spark can come up again. */
+  clearHistory: () => void;
   toggleType: (type: SparkType) => void;
   setVibe: (vibe: Vibe) => void;
   setWorkSafe: (workSafe: boolean) => void;
@@ -65,6 +69,9 @@ export const useSparkStore = create<SparkState>()((set, get) => {
     next: draw,
     reroll: draw,
     close: () => set({ current: null }),
+    show: (spark) =>
+      set(({ history }) => ({ current: spark, history: recordShown(history, spark) })),
+    clearHistory: () => set({ history: emptyHistory }),
     toggleType: (type) =>
       set(({ filters }) => ({ filters: { ...filters, types: toggleType(filters.types, type) } })),
     setVibe: (vibe) => set(({ filters }) => ({ filters: { ...filters, vibe } })),

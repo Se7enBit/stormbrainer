@@ -13,7 +13,7 @@ npm test
 npm run build:web      # web export to dist/, as deployed
 ```
 
-Every push is typechecked, linted, tested and exported for web; pushes to `main` are deployed to GitHub Pages.
+Every push is typechecked, linted, tested and exported for web; pushes to `main` are deployed to GitHub Pages. The **Android APK** workflow (Actions tab → Run workflow) builds an installable preview APK as a downloadable artifact.
 
 - [SPEC.md](SPEC.md): scope, data model, acceptance criteria
 - [CLAUDE.md](CLAUDE.md): working rules for this repo

@@ -41,6 +41,8 @@ export const strings = {
     or: 'or',
     hotTakeHint: 'Agree or disagree?',
     memoryLaneHint: 'Who has a story?',
+    save: 'Save spark',
+    unsave: 'Remove from saved',
   },
   /** Friendly messages for AI failures. Never include the key or raw responses. */
   aiErrors: {
@@ -54,7 +56,10 @@ export const strings = {
   } satisfies Record<AiErrorKind, string>,
   saved: {
     title: 'Saved',
-    comingSoon: 'Sparks you star will show up here. Saving arrives in a later milestone.',
+    empty: 'Nothing saved yet. Tap ☆ on a card to keep it here.',
+    hint: 'Tap a spark to show it again. Long-press to delete it.',
+    delete: 'Delete',
+    cancel: 'Cancel',
   },
   settings: {
     title: 'Settings',
@@ -78,10 +83,14 @@ export const strings = {
     advanced: 'Advanced',
     modelLabel: 'Model id',
     modelHint: 'Leave blank to use the default.',
+    sparksSection: 'Sparks',
+    workSafeDefault: 'Work-safe by default',
+    workSafeDefaultHint: 'Start with the work-safe toggle on, for team lunches and offsites.',
+    clearHistory: 'Clear history',
+    historyCleared: 'History cleared: every spark can come up again.',
     about: 'About',
     privacy:
       'There is no Stormbrainer server: AI requests go straight from this device to Google. On the Gemini free tier, Google may use prompts to improve its products, so keep anything sensitive out of the group context.',
-    comingSoon: 'The work-safe default and clearing history arrive in a later milestone.',
     version: 'Version',
   },
 } as const;

@@ -3,6 +3,10 @@ import { useEffect } from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { sparkHaptic } from '../src/device/haptics';
+import { KeepAwake } from '../src/device/KeepAwake';
+import { isSaved } from '../src/sparks/saved';
+import { useSavedStore } from '../src/store/savedStore';
 import { useSettingsStore } from '../src/store/settingsStore';
 import { useSparkStore } from '../src/store/sparkStore';
 import { strings } from '../src/strings';
@@ -26,6 +30,8 @@ export default function Home() {
   const loading = useSparkStore((s) => s.loading);
   const hasKey = useSettingsStore((s) => s.hasKey);
   const keyStatus = useSettingsStore((s) => s.keyStatus);
+  const saved = useSavedStore((s) => s.saved);
+  const toggleSave = useSavedStore((s) => s.toggle);
   const needsAttention = hasKey && (keyStatus === 'invalidKey' || keyStatus === 'modelNotFound');
 
   // Android back closes the card instead of leaving the app.
@@ -38,16 +44,24 @@ export default function Home() {
     return () => subscription.remove();
   }, [current, close]);
 
+  const spark = () => {
+    sparkHaptic();
+    void next();
+  };
+
   if (current) {
     return (
       <SafeAreaView style={styles.screen}>
         <Stack.Screen options={{ headerShown: false }} />
+        <KeepAwake />
         <SparkCard
           spark={current}
-          onNext={() => void next()}
+          onNext={spark}
           onReroll={() => void reroll()}
           onClose={close}
           loading={loading}
+          saved={isSaved(saved, current)}
+          onToggleSave={() => toggleSave(current)}
         />
       </SafeAreaView>
     );
@@ -57,7 +71,7 @@ export default function Home() {
     <SafeAreaView style={styles.screen} edges={['bottom', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: true }} />
       <View style={styles.center}>
-        <SparkButton onPress={() => void next()} loading={loading} />
+        <SparkButton onPress={spark} loading={loading} />
       </View>
       <View style={styles.controls}>
         <ChipsStrip

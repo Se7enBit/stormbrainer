@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { Spark } from '../sparks/types';
 import { strings } from '../strings';
@@ -12,10 +12,20 @@ interface Props {
   onClose: () => void;
   /** Waiting for the next AI spark: show a spinner and disable Next/Reroll. */
   loading?: boolean;
+  saved?: boolean;
+  onToggleSave?: () => void;
 }
 
 /** A full-screen card in very large text, laid out by spark type. */
-export function SparkCard({ spark, onNext, onReroll, onClose, loading = false }: Props) {
+export function SparkCard({
+  spark,
+  onNext,
+  onReroll,
+  onClose,
+  loading = false,
+  saved = false,
+  onToggleSave,
+}: Props) {
   const accent = typeColors[spark.type];
   const fontSize = cardFontSize(spark.text);
 
@@ -25,6 +35,19 @@ export function SparkCard({ spark, onNext, onReroll, onClose, loading = false }:
         <Text style={[styles.typeLabel, { color: accent }]}>{strings.types[spark.type]}</Text>
         {loading && <ActivityIndicator color={colors.textMuted} />}
         {spark.source === 'deck' && <Text style={styles.badge}>{strings.card.offlineBadge}</Text>}
+        {onToggleSave && (
+          <Pressable
+            onPress={onToggleSave}
+            accessibilityRole="button"
+            accessibilityLabel={saved ? strings.card.unsave : strings.card.save}
+            accessibilityState={{ selected: saved }}
+            hitSlop={12}
+          >
+            <Text style={[styles.star, saved && { color: colors.accent }]}>
+              {saved ? '★' : '☆'}
+            </Text>
+          </Pressable>
+        )}
       </View>
 
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
@@ -111,6 +134,11 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 2,
     textTransform: 'uppercase',
+  },
+  star: {
+    color: colors.textMuted,
+    fontSize: 30,
+    lineHeight: 34,
   },
   badge: {
     color: colors.textMuted,

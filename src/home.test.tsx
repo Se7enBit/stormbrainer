@@ -83,6 +83,6 @@ describe('home screen', () => {
     await renderRouter('./app', { initialUrl: '/' });
     await fireEvent.press(screen.getByText(strings.nav.settings));
     expect(screen).toHavePathname('/settings');
-    expect(screen.getByText(strings.settings.comingSoon)).toBeOnTheScreen();
+    expect(screen.getByText(strings.settings.privacy)).toBeOnTheScreen();
   });
 });
