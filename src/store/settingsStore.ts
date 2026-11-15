@@ -6,6 +6,7 @@ import { loadApiKey, removeApiKey, saveApiKey } from '../storage/secureKey';
 import { configureAi, currentProvider } from './ai';
 
 const MODEL_KEY = 'stormbrainer.model';
+const WORK_SAFE_KEY = 'stormbrainer.workSafeDefault';
 
 /** none: no key saved; saved: saved but not tested yet; ok: last test passed. */
 export type KeyStatus = 'none' | 'saved' | 'testing' | 'ok' | AiErrorKind;
@@ -18,12 +19,15 @@ interface SettingsState {
   keyStatus: KeyStatus;
   /** Model override from Advanced; empty means the default. */
   model: string;
+  /** Work-safe toggle position at startup. */
+  workSafeDefault: boolean;
   load: () => Promise<void>;
   /** Save a pasted key, then test it. */
   saveKey: (apiKey: string) => Promise<void>;
   removeKey: () => Promise<void>;
   testKey: () => Promise<void>;
   setModel: (model: string) => Promise<void>;
+  setWorkSafeDefault: (workSafe: boolean) => Promise<void>;
   /** A spark request found the key or model unusable: show it in Settings. */
   reportAiError: (kind: AiErrorKind) => void;
 }
@@ -33,15 +37,21 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   hasKey: false,
   keyStatus: 'none',
   model: '',
+  workSafeDefault: false,
 
   load: async () => {
-    const [apiKey, model] = await Promise.all([loadApiKey(), getString(MODEL_KEY)]);
+    const [apiKey, model, workSafe] = await Promise.all([
+      loadApiKey(),
+      getString(MODEL_KEY),
+      getString(WORK_SAFE_KEY),
+    ]);
     configureAi(apiKey, model ?? '');
     set({
       hydrated: true,
       hasKey: Boolean(apiKey),
       keyStatus: apiKey ? 'saved' : 'none',
       model: model ?? '',
+      workSafeDefault: workSafe === 'true',
     });
   },
 
@@ -82,6 +92,11 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     const apiKey = get().hasKey ? await loadApiKey() : null;
     configureAi(apiKey, model);
     set({ model, keyStatus: apiKey ? 'saved' : 'none' });
+  },
+
+  setWorkSafeDefault: async (workSafe) => {
+    set({ workSafeDefault: workSafe });
+    await setString(WORK_SAFE_KEY, String(workSafe));
   },
 
   reportAiError: (kind) => {

@@ -5,9 +5,11 @@ import { Linking, Platform, ScrollView, StyleSheet, Text, TextInput, View } from
 import { API_KEY_URL, DEFAULT_GEMINI_MODEL } from '../src/ai/gemini';
 import { AI_ERROR_KINDS, type AiErrorKind } from '../src/ai/provider';
 import { useSettingsStore, type KeyStatus } from '../src/store/settingsStore';
+import { useSparkStore } from '../src/store/sparkStore';
 import { strings } from '../src/strings';
 import { Button } from '../src/ui/Button';
 import { colors, spacing } from '../src/ui/theme';
+import { Toggle } from '../src/ui/Toggle';
 
 /** Set by CI, so the web preview shows which commit it was built from. */
 const commit = process.env.EXPO_PUBLIC_COMMIT_SHA?.slice(0, 7) ?? 'local';
@@ -28,6 +30,9 @@ export default function Settings() {
   const testKey = useSettingsStore((s) => s.testKey);
   const removeKey = useSettingsStore((s) => s.removeKey);
   const setModel = useSettingsStore((s) => s.setModel);
+  const workSafeDefault = useSettingsStore((s) => s.workSafeDefault);
+  const setWorkSafeDefault = useSettingsStore((s) => s.setWorkSafeDefault);
+  const [historyCleared, setHistoryCleared] = useState(false);
 
   const [keyDraft, setKeyDraft] = useState('');
   const [modelDraft, setModelDraft] = useState(model);
@@ -134,9 +139,32 @@ export default function Settings() {
         <Text style={styles.note}>{strings.settings.modelHint}</Text>
       </Section>
 
+      <Section title={strings.settings.sparksSection}>
+        <Toggle
+          label={strings.settings.workSafeDefault}
+          value={workSafeDefault}
+          onValueChange={(workSafe) => {
+            void setWorkSafeDefault(workSafe);
+            useSparkStore.getState().setWorkSafe(workSafe);
+          }}
+        />
+        <Text style={styles.note}>{strings.settings.workSafeDefaultHint}</Text>
+        <Button
+          label={strings.settings.clearHistory}
+          onPress={() => {
+            useSparkStore.getState().clearHistory();
+            setHistoryCleared(true);
+          }}
+        />
+        {historyCleared && (
+          <Text style={styles.note} accessibilityLiveRegion="polite">
+            {strings.settings.historyCleared}
+          </Text>
+        )}
+      </Section>
+
       <Section title={strings.settings.about}>
         <Text style={styles.text}>{strings.settings.privacy}</Text>
-        <Text style={styles.text}>{strings.settings.comingSoon}</Text>
         <Text style={styles.note}>
           {strings.settings.version} {version} · {commit}
         </Text>

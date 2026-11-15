@@ -1,0 +1,54 @@
+name: Android APK
+
+# Builds an installable preview APK (release build signed with the debug key, arm64 phones)
+# and attaches it to the run as an artifact: download it on the phone and install.
+# Start it from the Actions tab (Run workflow) on any branch. It also runs on pushes that
+# change native dependencies or app config. No Expo account or secrets needed.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - package.json
+      - package-lock.json
+      - app.json
+      - .github/workflows/android.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v6
+      - run: npm ci
+      - name: Generate the native Android project
+        run: npx expo prebuild --platform android --no-install
+        env:
+          CI: 1
+      - name: Build the release APK
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+        env:
+          EXPO_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+      - name: Name the APK after the commit
+        run: cp android/app/build/outputs/apk/release/app-release.apk "stormbrainer-${GITHUB_SHA::7}.apk"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: stormbrainer-apk
+          path: stormbrainer-*.apk
+          retention-days: 14

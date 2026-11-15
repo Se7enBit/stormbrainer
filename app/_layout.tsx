@@ -3,7 +3,9 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useSavedStore } from '../src/store/savedStore';
 import { useSettingsStore } from '../src/store/settingsStore';
+import { useSparkStore } from '../src/store/sparkStore';
 import { strings } from '../src/strings';
 import { colors, spacing } from '../src/ui/theme';
 
@@ -21,12 +23,18 @@ const theme: Theme = {
 
 // A deep link to /saved or /settings (e.g. a refreshed web preview) still gets Home underneath,
 // so the back button works.
-export const unstable_settings = { initialRouteName: 'index' };
+export const unstable_settings = { anchor: 'index' };
 
 export default function RootLayout() {
-  // Read the saved key and model once at startup.
+  // Read stored settings and saved sparks once at startup.
   useEffect(() => {
-    void useSettingsStore.getState().load();
+    void useSettingsStore
+      .getState()
+      .load()
+      .then(() =>
+        useSparkStore.getState().setWorkSafe(useSettingsStore.getState().workSafeDefault),
+      );
+    void useSavedStore.getState().load();
   }, []);
 
   return (
